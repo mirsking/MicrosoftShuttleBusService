@@ -1,0 +1,10 @@
+﻿.main {
+    width:100%;
+    max-width:none;
+}
+
+.map {
+    position:absolute;
+    left:0px;
+    top:0px;
+}
