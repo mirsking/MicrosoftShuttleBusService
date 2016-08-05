@@ -26,5 +26,12 @@ namespace MicrosoftShuttleBusService.Controllers
 
             return View();
         }
+
+        public ActionResult BaiduMap()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
     }
 }
