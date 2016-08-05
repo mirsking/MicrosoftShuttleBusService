@@ -56,7 +56,7 @@
             map.addOverlay(markersForStation[i]);
             markersForStation[i].licontent = "<div style=\"width:500px;height:200px;\"><div style=\"float:left\"><img src=\"" + datas[i].photo + 
                             "\" style=\"width:300px;height:200px;\"></div><div style=\"float:right;width:180px;height:200px;\"><h3>" + 
-                            datas[i].name + "</h3><span>" + datas[i].route + ": " + datas[i].routeTime + "</span></div></div>";
+                            datas[i].name + "</h3><span><strong>班车线路:</strong> " + datas[i].route + "</span> <br /><span><strong>到站时间:</strong> " + datas[i].routeTime + "</span></div></div>";
             markersForStation[i].opts1 = { width: 500 };
             markersForStation[i].infoWindow = new BMap.InfoWindow(markersForStation[i].licontent, markersForStation[i].opts1);
             markersForStation[i].addEventListener('click', function () {
