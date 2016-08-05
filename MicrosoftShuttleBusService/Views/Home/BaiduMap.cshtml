@@ -33,7 +33,7 @@
         this.latitude = latitude;
     }
 
-    var makersForStation = new Array();
+    var markersForStation = new Array();
     var datas = new Array();
     datas[0] = (new Station("虹桥路宜山路", "http://static.shenjianshou.cn/images/11666-daabbc70ddb73cf96afab7721c97edf0", "Route 11", "11:00am", 121.3511167, 31));
     datas[1] = (new Station("张江路建中路", "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQdSYfLw8bJOpPSVOfhBLTSwF04xrCX_rlfUO8SXS_5OyrkaUZV", "Route 8", "8:00am", 121.4511167, 31));
@@ -48,21 +48,26 @@
     }
 
     var map = createMap("container", 121.4511167, 31);
-    addMakersInBaiduMap(datas, map);
+    addMarkersInBaiduMap(datas, map);
     // datas contain all the info for each station
-    function addMakersInBaiduMap(datas, map) {
+    function addMarkersInBaiduMap(datas, map) {
         for (i = 0; i < datas.length; i++) {
-            makersForStation.push(new BMap.Marker(new BMap.Point(datas[i].longitude, datas[i].latitude)));
-            map.addOverlay(makersForStation[i]);
-            makersForStation[i].licontent = "<div style=\"width:500px;height:200px;\"><div style=\"float:left\"><img src=\"" + datas[i].photo + 
+            markersForStation.push(new BMap.Marker(new BMap.Point(datas[i].longitude, datas[i].latitude)));
+            map.addOverlay(markersForStation[i]);
+            markersForStation[i].licontent = "<div style=\"width:500px;height:200px;\"><div style=\"float:left\"><img src=\"" + datas[i].photo + 
                             "\" style=\"width:300px;height:200px;\"></div><div style=\"float:right;width:180px;height:200px;\"><h3>" + 
                             datas[i].name + "</h3><span>" + datas[i].route + ": " + datas[i].routeTime + "</span></div></div>";
-            makersForStation[i].opts1 = { width: 500 };
-            makersForStation[i].infoWindow = new BMap.InfoWindow(makersForStation[i].licontent, makersForStation[i].opts1);
-            makersForStation[i].addEventListener('click', function () {
+            markersForStation[i].opts1 = { width: 500 };
+            markersForStation[i].infoWindow = new BMap.InfoWindow(markersForStation[i].licontent, markersForStation[i].opts1);
+            markersForStation[i].addEventListener('click', function () {
                 this.openInfoWindow(this.infoWindow);
             });
         }
+    }
+
+    function deleteMarkersInBaiduMap(map) {
+        for (i = 0; i < markersForStation.length; i++)
+            map.removeOverlay(markersForStation[i]);
     }
   
 </script>
