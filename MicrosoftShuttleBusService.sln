@@ -5,6 +5,12 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicrosoftShuttleBusService", "MicrosoftShuttleBusService\MicrosoftShuttleBusService.csproj", "{08188B95-AC09-4985-99C4-A6099C29DD0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LBSYunNetSDK", "LBSYunNetSDK\LBSYunNetSDK.csproj", "{A286B6AD-0890-4524-A85A-8037814F833B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaiduMapApiDemo", "BaiduMapApiDemo\BaiduMapApiDemo.csproj", "{76FDF076-B8E8-43EE-A4A3-57FF320A7E75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaiduMapSdk", "BaiduMapSdk\BaiduMapSdk.csproj", "{76D8F04A-2B6C-42CF-982C-5CAB1CE810FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{08188B95-AC09-4985-99C4-A6099C29DD0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08188B95-AC09-4985-99C4-A6099C29DD0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08188B95-AC09-4985-99C4-A6099C29DD0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A286B6AD-0890-4524-A85A-8037814F833B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A286B6AD-0890-4524-A85A-8037814F833B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A286B6AD-0890-4524-A85A-8037814F833B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A286B6AD-0890-4524-A85A-8037814F833B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76FDF076-B8E8-43EE-A4A3-57FF320A7E75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76FDF076-B8E8-43EE-A4A3-57FF320A7E75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76FDF076-B8E8-43EE-A4A3-57FF320A7E75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76FDF076-B8E8-43EE-A4A3-57FF320A7E75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76D8F04A-2B6C-42CF-982C-5CAB1CE810FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76D8F04A-2B6C-42CF-982C-5CAB1CE810FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76D8F04A-2B6C-42CF-982C-5CAB1CE810FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76D8F04A-2B6C-42CF-982C-5CAB1CE810FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
