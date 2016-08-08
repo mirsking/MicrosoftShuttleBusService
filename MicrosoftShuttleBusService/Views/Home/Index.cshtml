@@ -1,10 +1,12 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=AxXlQ1BehjgOnV5GflqAjrs46iawMsUE"></script>
+<script src="http://d1.lashouimg.com/static/js/release/jquery-1.4.2.min.js" type="text/javascript"></script>
 
-<div class="main map">
+<div class="main map" style="width:100%;height:100%">
     @*<p>显示地图</p>*@
-    <img src="~/Content/1.png" />
+    <div style="width:100%;height:100%;border:1px solid gray" id="main_map"></div>
 </div>
 
 <div class="container main">
@@ -151,4 +153,53 @@
             $("#destinationInput").val(temp);
         });
     });
+</script>
+
+<script type="text/javascript">
+    function Station (name, photo, route, routeTime, longitude, latitude) {
+        this.name = name;
+        this.photo = photo;
+        this.route = route;
+        this.routeTime = routeTime;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
+    var markersForStation = new Array();
+    var datas = new Array();
+    datas[0] = (new Station("虹桥路宜山路", "http://static.shenjianshou.cn/images/11666-daabbc70ddb73cf96afab7721c97edf0", "Route 11", "11:00am", 121.3511167, 31));
+    datas[1] = (new Station("张江路建中路", "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQdSYfLw8bJOpPSVOfhBLTSwF04xrCX_rlfUO8SXS_5OyrkaUZV", "Route 8", "8:00am", 121.4511167, 31));
+
+    // create a baidu map
+    // The divID is the ID of the div which gonna show the map
+    function createMap(divID, longitude, latitude) {
+        map = new BMap.Map(divID);
+        map.centerAndZoom(new BMap.Point(longitude, latitude), 13);
+        map.enableScrollWheelZoom();
+        return map;
+    }
+
+    var map = createMap("main_map", 121.4511167, 31);
+    addMarkersInBaiduMap(datas, map);
+    // datas contain all the info for each station
+    function addMarkersInBaiduMap(datas, map) {
+        for (i = 0; i < datas.length; i++) {
+            markersForStation.push(new BMap.Marker(new BMap.Point(datas[i].longitude, datas[i].latitude)));
+            map.addOverlay(markersForStation[i]);
+            markersForStation[i].licontent = "<div style=\"width:500px;height:200px;\"><div style=\"float:left\"><img src=\"" + datas[i].photo +
+                            "\" style=\"width:300px;height:200px;\"></div><div style=\"float:right;width:180px;height:200px;\"><h3>" +
+                            datas[i].name + "</h3><span><strong>班车线路:</strong> " + datas[i].route + "</span> <br /><span><strong>到站时间:</strong> " + datas[i].routeTime + "</span></div></div>";
+            markersForStation[i].opts1 = { width: 500 };
+            markersForStation[i].infoWindow = new BMap.InfoWindow(markersForStation[i].licontent, markersForStation[i].opts1);
+            markersForStation[i].addEventListener('click', function () {
+                this.openInfoWindow(this.infoWindow);
+            });
+        }
+    }
+
+    function deleteMarkersInBaiduMap(map) {
+        for (i = 0; i < markersForStation.length; i++)
+            map.removeOverlay(markersForStation[i]);
+    }
+
 </script>
