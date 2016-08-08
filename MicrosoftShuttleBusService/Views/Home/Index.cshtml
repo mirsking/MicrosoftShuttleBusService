@@ -2,33 +2,153 @@
     ViewBag.Title = "Home Page";
 }
 
+<div class="main map">
+    @*<p>显示地图</p>*@
+    <img src="~/Content/1.png" />
+</div>
+
 <div class="container main">
     <div class="row">
-        @*<div class="col-md-1 sidebar">
-            <ul class="nav nav-sidebar">
-                <div class="list-group">
-                    <a href="#" class="list-group-item active">搜索路线</a>
-                    <a href="#" class="list-group-item">新增地点</a>
-                </div>
-            </ul>
-        </div>*@
-
         <div class="col-md-10">
             <div class="row">
-                <div class="col-md-3">
+                <div id ="searchDiv"class="col-md-3" style="">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for...">
+                        <input id="searchForInput" type="text" class="form-control" placeholder="Search for...">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">Go!</button>
+                            <button id="searchButton" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button><!-- /searchButton -->
+                        </span>
+                        <span class="input-group-btn">
+                            <button id ="detailRouteButton" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
+                            </button><!-- /detailRouteButton -->
+                        </span>
+                        <span class="input-group-btn">
+                            <button id="newSiteButton" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            </button><!-- /newSiteButton -->
                         </span>
                     </div><!-- /input-group -->
-                </div>
+                </div><!-- /searchDiv -->
+
+                <div id="routeDetailDiv"class="col-md-3" style="display:none">
+                    <div class="col-md-offset-11">
+                        <span class="input-group-btn">
+                            <button id="returnFromRouteDetailButton" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span><!-- return -->
+                            </button>
+                        </span>
+                    </div><!-- /returnDiv -->
+                    <div class="input-group">
+                        <input id="sourceInput" type="text" class="form-control" placeholder="Source" aria-describedby="basic-addon1">
+                        <span class="input-group-btn">
+                            <span class="glyphicon glyphicon-sort" aria-hidden="true">
+                                <button id="exchangeButton" class="btn btn-default" type="button">
+                                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                                </button>
+                            </span>
+                        </span>
+                    </div><!-- /sourceDiv -->
+                    <div class="input-group">
+                        <input id="destinationInput" type="text" class="form-control" placeholder="Destination" aria-describedby="basic-addon1">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button>
+                        </span>
+                    </div><!-- /destinationDiv -->
+                    <div>
+                        <div class="row detail">
+                            </br>
+                            <p>路线1</p>
+                            </br>
+                        </div>
+                        <div class="row detail">
+                            </br>
+                            <p>路线2</p>
+                            </br>
+                        </div>
+                        <div class="row detail">
+                            </br>
+                            <p>路线3</p>
+                            </br>
+                        </div>
+                    </div><!-- /routeInfoDiv -->
+                </div><!-- /routeDeatailDiv -->
+
+                <div id="newSiteDiv" class="col-md-3" style="display:none">
+                    <div class="col-md-offset-11">
+                        <span class="input-group-btn">
+                            <button id="returnFromNewSiteButton" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span><!-- return -->
+                            </button>
+                        </span>
+                    </div><!-- /returnDiv -->
+                    <div class="input-group">
+                        <input id="positionInput" type="text" class="form-control" placeholder="Position" aria-describedby="basic-addon1">
+                        <span class="input-group-btn">
+                            <button id="searchPositionButton" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button><!-- /searchPositionButton -->
+                        </span>
+                    </div><!-- /positionDiv -->
+                    <div>
+                        <div class="row detail">
+                            </br>
+                            <p>人员信息1</p>
+                            </br>
+                        </div>
+                        <div class="row detail">
+                            </br>
+                            <p>人员信息2</p>
+                            </br>
+                        </div>
+                        <div class="row detail">
+                            </br>
+                            <p>人员信息3</p>
+                            </br>
+                        </div>
+                    </div><!-- /routeInfoDiv -->
+                </div><!-- /newSiteDiv -->
             </div>
         </div>
     </div>
 </div>
 
-<div class="main map">
-    @*<p>显示地图</p>*@
-    <img src="~/Content/1.png" />
-</div>
+<script>
+    $(document).ready(function () {
+        $("#detailRouteButton").click(function () {
+            $("#searchDiv").css("display", "none");
+            $("#routeDetailDiv").css("display", "");
+            $("#sourceInput").val($("#searchForInput").val());
+        });
+
+        $("#searchButton").click(function () {
+            $("#searchDiv").css("display", "none");
+            $("#routeDetailDiv").css("display", "");
+            $("#sourceInput").val($("#searchForInput").val());
+        });
+
+        $("#newSiteButton").click(function () {
+            $("#searchDiv").css("display", "none");
+            $("#newSiteDiv").css("display", "");
+        });
+
+        $("#returnFromRouteDetailButton").click(function () {
+            $("#searchDiv").css("display", "");
+            $("#routeDetailDiv").css("display", "none");
+        });
+
+        $("#returnFromNewSiteButton").click(function () {
+            $("#searchDiv").css("display", "");
+            $("#newSiteDiv").css("display", "none");
+        });
+
+        $("#exchangeButton").click(function () {
+            var temp = $("#sourceInput").val();
+            $("#sourceInput").val($("#destinationInput").val());
+            $("#destinationInput").val(temp);
+        });
+    });
+</script>

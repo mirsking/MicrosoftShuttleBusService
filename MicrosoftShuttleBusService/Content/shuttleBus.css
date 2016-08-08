@@ -1,10 +1,16 @@
 ﻿.main {
-    width:100%;
-    max-width:none;
+    width: 100%;
+    max-width: none;
 }
 
 .map {
-    position:absolute;
-    left:0px;
-    top:0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.detail{
+    background-color: white;
+    margin-left: 0px;
+    margin-right: 0px;
 }
