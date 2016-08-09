@@ -14,7 +14,6 @@ namespace BaiduMapSdk.Direction
 {
     public static class WebApiDirection
     {
-
         public static uint GetDirectionTime(Location origin, Location destination, string ak)
         {
             var jObject = GetDirection(origin, destination, ak);
@@ -28,7 +27,7 @@ namespace BaiduMapSdk.Direction
             }
         }
 
-        private static JObject GetDirection(Location origin, Location destination, string ak)
+        public static JObject GetDirection(Location origin, Location destination, string ak)
         {
             Dictionary<string, string> values = new Dictionary<string, string>();
             values.Add("ak",ak);

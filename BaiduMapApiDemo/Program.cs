@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 using BaiduMapSdk.Entities;
 using BaiduMapSdk.Common;
@@ -64,10 +66,15 @@ namespace BaiduMapApiDemo
 
 
             #region Direction
+            //parsed json
             var origin = new Location { Longitude = 40.056878, Latitude = 116.30815 };
             var destination = new Location { Longitude = 39.915285, Latitude = 116.403857 };
             var time = WebApiDirection.GetDirectionTime(origin, destination, ak);
             Console.WriteLine("From 百度大厦 to 天安门 needs time: {0} s", time);
+
+            //return json directly, you can see the json format from here http://lbsyun.baidu.com/index.php?title=webapi/direction-api#.E5.85.AC.E4.BA.A4.E8.B7.AF.E5.BE.84.E8.A7.84.E5.88.92.E8.BF.94.E5.9B.9E.E5.80.BC.E8.AF.B4.E6.98.8E
+            var json = WebApiDirection.GetDirection(origin, destination, ak);
+            Console.Write("Json is \n" + json);
             #endregion
 
             #region Get Info
