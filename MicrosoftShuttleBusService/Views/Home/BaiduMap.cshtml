@@ -160,5 +160,10 @@
     var driving = new BMap.DrivingRoute(map, {renderOptions:{map: map, autoViewport: true}});
     driving.search(p1, p2,{waypoints:[p3]});//waypoints表示途经点
 
+    map.addEventListener("click", function(e){
+        var pt = e.point;
+        alert("GPS is: " + pt.lng + ", " + pt.lat);
+    });
+
 </script>
 
