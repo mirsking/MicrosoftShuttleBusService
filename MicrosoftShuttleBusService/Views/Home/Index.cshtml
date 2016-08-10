@@ -60,7 +60,7 @@
                             </button>
                         </span>
                     </div><!-- /destinationDiv -->
-                    <div>
+                    <div id="route-result">
                         <div class="row detail">
                             </br>
                             <p>路线1</p>
@@ -207,5 +207,20 @@
         for (i = 0; i < markersForStation.length; i++)
             map.removeOverlay(markersForStation[i]);
     }
+
+    function createTransit(map) {
+        var transit = new BMap.TransitRoute(map, {
+            renderOptions: { map: map, panel: "route-result" }
+        });
+        return transit;
+    }
+
+    function searchTransit(map, transit, origin, destination) {
+        map.centerAndZoom(new BMap.Point(121.476788, 31.23754), 12);
+        transit.search(origin, destination);
+    }
+
+    var transit = createTransit(map);
+    searchTransit(map, transit, "虹桥火车站", "微软上海");
 
 </script>
