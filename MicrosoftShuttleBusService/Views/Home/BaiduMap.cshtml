@@ -17,8 +17,9 @@
     </style>
 </head>
 <body>
-	<div id="route-result"></div>
-    <div id="map"</div>
+    <div id="log"></div>
+    <div id="search_result"></div>
+    <div id="map"></div>
 </body>
 </html>
 
@@ -61,27 +62,103 @@
         for (i = 0; i < markersForStation.length; i++)
             map.removeOverlay(markersForStation[i]);
     }
+
+    function drawRouteFromPlan(map, plan){
+        for (var i = 0; i < plan.getNumRoutes(); i ++){
+            var walk = plan.getRoute(i);
+            if (walk.getDistance(false) > 0){
+                // 步行线路有可能为0
+                var polyline = new BMap.Polyline(walk.getPath(), {lineColor: "green"});
+                polylines.push(polyline);
+                map.addOverlay(polyline);
+            }
+        }
+
+        // 绘制公交线路
+        for (i = 0; i < plan.getNumLines(); i ++){
+            var line = plan.getLine(i);
+            var polyline = new BMap.Polyline(line.getPath());
+            polylines.push(polyline);
+            map.addOverlay(polyline);
+        }
+        // 输出方案信息
+
+        var s = [];
+        s.push(plan.getDescription());
+        return s;
+    }
 	
 	function createTransit(map){
-		var transit = new BMap.TransitRoute(map, {
-			renderOptions: {map: map, panel: "route-result"}
-		});
+		var transit = new BMap.TransitRoute(map);
+
+        //Choose 1: add a callback function
+        transit.setSearchCompleteCallback(
+            function(results) {
+                if (transit.getStatus() == BMAP_STATUS_SUCCESS) {
+                    var firstPlan = results.getPlan(0);
+                    var res = drawRouteFromPlan(map, firstPlan);
+                    document.getElementById("log").innerHTML = res.join("<br>");
+                }
+            }
+        );
+
+        //Choose 2: after transit.search use transit.getResults() to get the search results;
+        // The return type of getResults() is TransitRouteResult
+        // Links: 1) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/TransitRoute
+        //         2) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/TransitRouteResult
+
 		return transit;
 	}
 	   
 	function searchTransit(map, transit, origin, destination){	
-		map.centerAndZoom(new BMap.Point(121.476788,31.23754), 12);	
+		map.centerAndZoom(new BMap.Point(121.476788,31.23754), 12);
 		transit.search(origin, destination);
 	}
-	
+
+	function createLocalSearch(map) {
+	    /// It's the same usage as the transit search, you can add a callback here or use getResults() after search.
+        /// The return type of getResults is LocalResult or array of LocalResult.
+        /// links: 1) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/LocalSearch
+        ///        2) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/LocalResult
+
+        var options = {
+            onSearchComplete: function (results) {
+                if (local.getStatus() == BMAP_STATUS_SUCCESS) {
+                    // 判断状态是否正确
+                    var s = [];
+                    for (var i = 0; i < results.getCurrentNumPois(); i++) {
+                        s.push(results.getPoi(i).title + ", " + results.getPoi(i).address);
+                    }
+                    document.getElementById("search_result").innerHTML = s.join("<br>");
+                }
+            }
+        };
+        var local = new BMap.LocalSearch(map, options);
+        return local;
+    }
+
 	var markersForStation = new Array();
     var datas = new Array();
     datas[0] = (new Station("虹桥路宜山路", "http://static.shenjianshou.cn/images/11666-daabbc70ddb73cf96afab7721c97edf0", "Route 11", "11:00am", 121.3511167, 31));
     datas[1] = (new Station("张江路建中路", "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQdSYfLw8bJOpPSVOfhBLTSwF04xrCX_rlfUO8SXS_5OyrkaUZV", "Route 8", "8:00am", 121.4511167, 31));
 	var map = createMap("map", 121.4511167, 31);
     addMarkersInBaiduMap(datas, map);
+
+    // route lines array, not used right now
+    var polylines = [];
 	var transit = createTransit(map);
-	searchTransit(map, transit, "虹桥火车站", "微软上海");
-	
+	//searchTransit(map, transit, "虹桥火车站", "微软上海");
+
+    var local_search = createLocalSearch(map);
+    //local_search.search("虹桥火车站");
+
+    ///
+    var p1 = new BMap.Point(121.476788,31.23754);
+    var p2 = new BMap.Point(121.476788,30.23754);
+    var p3 = new BMap.Point(121.476788,31.03754);
+
+    var driving = new BMap.DrivingRoute(map, {renderOptions:{map: map, autoViewport: true}});
+    driving.search(p1, p2,{waypoints:[p3]});//waypoints表示途经点
+
 </script>
 
