@@ -240,6 +240,32 @@
         transit.search(origin, destination);
     }
 
+    function toMicrosoft(lng, lat, address) {
+        var transit = new BMap.TransitRoute(map, {
+            renderOptions: { map: map, panel: "route_result" }
+        });
+        $("#searchDiv").css("display", "none");
+        $("#routeDetailDiv").css("display", "");
+        $("#newSiteDiv").css("display", "none");
+        $("#sourceInput").val(address);
+        $("#destinationInput").val("微软上海分公司");
+        transit.search(new BMap.Point(lng, lat), "微软上海分公司");
+    }
+
+    function fromMicrosoftToHere(lng, lat, address) {
+        var transit = new BMap.TransitRoute(map, {
+            renderOptions: { map: map, panel: "route_result" }
+        });
+        $("#searchDiv").css("display", "none");
+        $("#routeDetailDiv").css("display", "");
+        $("#newSiteDiv").css("display", "none");
+        $("#sourceInput").val("微软上海分公司");
+        $("#destinationInput").val(address);
+        transit.search("微软上海分公司", new BMap.Point(lng, lat));
+    }
+
+   
+
     function search() {
         var transit = createTransit(map);
         searchTransit(map, transit, $("#sourceInput").val(), $("#destinationInput").val());
@@ -256,10 +282,14 @@
         var vectorMarker = new BMap.Marker(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), {icon:myIcon});
         map.addOverlay(vectorMarker);
         var tmp_content = item.parentElement.innerHTML;
-        vectorMarker.licontent = tmp_content.substr(0, tmp_content.indexOf("<button")) + "<br /><button id='gotoButton' class='btn btn-default' type='button'>" +
-                                "<span aria-hidden='true'>从这去公司</span>" +
-                                "</button><button id='gotoButton' class='btn btn-default' type='button'>" +
-                                "<span aria-hidden='true'>从公司来这</span>" +
+        vectorMarker.licontent = tmp_content.substr(0, tmp_content.indexOf("<button")) + "<br /><button id='gotoButton' class='btn btn-default' type='button' onclick='toMicrosoft(" +
+                                searchLocalResults.getPoi(item.id).point.lng + "," + searchLocalResults.getPoi(item.id).point.lat + ",\"" +
+                                searchLocalResults.getPoi(item.id).address + "\")'" +
+                                "><span aria-hidden='true'>从这去公司</span>" +
+                                "</button><button id='gotoButton' class='btn btn-default' type='button' onclick='fromMicrosoftToHere(" +
+                                searchLocalResults.getPoi(item.id).point.lng + "," + searchLocalResults.getPoi(item.id).point.lat + ",\"" +
+                                searchLocalResults.getPoi(item.id).address + "\")'" +
+                                "><span aria-hidden='true'>从公司来这</span>" +
                                 "</button>";
         vectorMarker.opts1 = { width: 100 };
         vectorMarker.infoWindow = new BMap.InfoWindow(vectorMarker.licontent, vectorMarker.opts1);
