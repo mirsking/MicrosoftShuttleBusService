@@ -27,11 +27,13 @@
                             </button><!-- /detailRouteButton -->
                         </span>
                         <span class="input-group-btn">
-                            <button id="newSiteButton" class="btn btn-default" type="button">
+                            <button id="newSiteViewButton" class="btn btn-default" type="button">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                             </button><!-- /newSiteButton -->
                         </span>
                     </div><!-- /input-group -->
+                    <div id="search_result">
+                    </div><!-- /routeInfoDiv -->
                 </div><!-- /searchDiv -->
 
                 <div id="routeDetailDiv" class="col-md-3" style="display:none">
@@ -76,18 +78,39 @@
                         <input id="aliasInput" type="text" class="form-control" placeholder="Alias" aria-describedby="basic-addon1">
                     </div><!-- /aliasDiv -->
                     <div class="input-group soloInput">
-                        <input id="phoneInput" type="text" class="form-control" placeholder="Phone" aria-describedby="basic-addon1">
+                        <input id="phoneInput" type="text" class="form-control" placeholder="电话" aria-describedby="basic-addon1">
                     </div><!-- /emailDiv -->
                     <div class="input-group">
-                        <input id="positionInput" type="text" class="form-control" placeholder="Position" aria-describedby="basic-addon1">
+                        <input id="positionInput" type="text" class="form-control" placeholder="位置" aria-describedby="basic-addon1">
                         <span class="input-group-btn">
                             <button id="searchPositionButton" class="btn btn-default" type="button" onclick="localSearch2()">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                             </button><!-- /searchPositionButton -->
                         </span>
+                        <span class="input-group-btn">
+                            <button id="newSiteButton" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            </button><!-- /newSiteButton -->
+                        </span>
                     </div><!-- /positionDiv -->
-                    <div id="positionResultDiv">
-                        
+                    <div id="search_position_result">
+                    </div>
+                    <div id="person_detail" style="display:none">
+                        <div class="row detail">
+                            </br>
+                            <p>人员信息1</p>
+                            </br>
+                        </div>
+                        <div class="row detail">
+                            </br>
+                            <p>人员信息2</p>
+                            </br>
+                        </div>
+                        <div class="row detail">
+                            </br>
+                            <p>人员信息3</p>
+                            </br>
+                        </div>
                     </div><!-- /routeInfoDiv -->
                 </div><!-- /newSiteDiv -->
             </div>
@@ -103,28 +126,36 @@
         $("#detailRouteButton").click(function () {
             $("#searchDiv").css("display", "none");
             $("#routeDetailDiv").css("display", "");
+            $("#newSiteDiv").css("display", "none");
             $("#sourceInput").val($("#searchForInput").val());
         });
 
         $("#searchButton").click(function () {
-            $("#searchDiv").css("display", "none");
-            $("#routeDetailDiv").css("display", "");
-            $("#sourceInput").val($("#searchForInput").val());
+            //$("#searchDiv").css("display", "none");
+            //$("#routeDetailDiv").css("display", "");
+            //$("#sourceInput").val($("#searchForInput").val());
             localSearch();
         });
 
-        $("#newSiteButton").click(function () {
+        $("#searchPositionButton").click(function () {
+            localSearch2();
+        });
+
+        $("#newSiteViewButton").click(function () {
             $("#searchDiv").css("display", "none");
+            $("#routeDetailDiv").css("display", "none");
             $("#newSiteDiv").css("display", "");
         });
 
         $("#returnFromRouteDetailButton").click(function () {
             $("#searchDiv").css("display", "");
             $("#routeDetailDiv").css("display", "none");
+            $("#newSiteDiv").css("display", "none");
         });
 
         $("#returnFromNewSiteButton").click(function () {
             $("#searchDiv").css("display", "");
+            $("#routeDetailDiv").css("display", "none");
             $("#newSiteDiv").css("display", "none");
         });
 
@@ -213,7 +244,7 @@
 
     function locateToPlace(item) {
         map.centerAndZoom(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), 13);
-        $("#returnFromRouteDetailButton").click();
+        //$("#returnFromRouteDetailButton").click();
         var overlays = map.getOverlays();
         for (i = 0; i < overlays.length ; i++)
             map.removeOverlay(overlays[i]);
@@ -278,7 +309,6 @@
                 //    document.getElementById("route_result").innerHTML = s.join("<br>");
                 }
             },
-            
             renderOptions: { map: map, autoViewport: true, panel: resultDivID },
 
             onResultsHtmlSet: function (container)
@@ -301,15 +331,13 @@
         return local;
     }
 
-
     function localSearch() {
-        var local_search = createLocalSearch(map, "route_result", "locateToPlace");
-        local_search.search($("#sourceInput").val());
-        
+        var local_search = createLocalSearch(map, "search_result", "locateToPlace");
+        local_search.search($("#searchForInput").val());
     }
 
     function localSearch2() {
-        var local_search = createLocalSearch(map, "positionResultDiv", "locateToPlace2");
+        var local_search = createLocalSearch(map, "search_location_result", "locateToPlace2");
         local_search.search($("#positionInput").val());
     }
 
