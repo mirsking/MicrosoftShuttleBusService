@@ -62,6 +62,22 @@ namespace BaiduMapApiDemo
         }
         public static String getSites()
         {
+            
+            var table_newSite = new LbsGeotable()
+            {
+                Name = "MBBus_NewSite",
+                Columns = new List<LbsGeotableColumn>()
+                {
+                    new LbsGeotableColumn() { Name = "Alias", Key="Alias", Type=(int)ColumnType.IsString, MaxLength=20},
+                    new LbsGeotableColumn() { Name = "Phone", Key="Phone", Type=(int)ColumnType.IsInt64, MaxLength = 20},
+                    new LbsGeotableColumn() { Name = "Position", Key="Position", Type= (int)ColumnType.IsString, MaxLength = 20 },
+                }
+            };
+
+            table_newSite.CreateGeotable(ak);
+
+            var poiInfo = table_newSite.GetAllPoiInfo<LbsGeotableBaseResponse<CustomPoiInfo>>();
+
             ArrayList eventList = new ArrayList();
             for (int i = 0; i < 3; i++)
             {
