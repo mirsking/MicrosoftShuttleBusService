@@ -74,25 +74,27 @@
                             </button>
                         </span>
                     </div><!-- /returnDiv -->
-                    <div class="input-group soloInput">
-                        <input id="aliasInput" type="text" class="form-control" placeholder="Alias" aria-describedby="basic-addon1">
-                    </div><!-- /aliasDiv -->
-                    <div class="input-group soloInput">
-                        <input id="phoneInput" type="text" class="form-control" placeholder="电话" aria-describedby="basic-addon1">
-                    </div><!-- /emailDiv -->
-                    <div class="input-group">
-                        <input id="positionInput" type="text" class="form-control" placeholder="位置" aria-describedby="basic-addon1">
-                        <span class="input-group-btn">
-                            <button id="searchPositionButton" class="btn btn-default" type="button" onclick="localSearch2()">
-                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                            </button><!-- /searchPositionButton -->
-                        </span>
-                        <span class="input-group-btn">
-                            <button id="newSiteButton" class="btn btn-default" type="button">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                            </button><!-- /newSiteButton -->
-                        </span>
-                    </div><!-- /positionDiv -->
+                    <form id="addSiteForm" action="AddSite">
+                        <div class="input-group soloInput">
+                            <input id="aliasInput" name="aliasInput" type="text" class="form-control" placeholder="Alias" aria-describedby="basic-addon1">
+                        </div><!-- /aliasDiv -->
+                        <div class="input-group soloInput">
+                            <input id="phoneInput" type="text" class="form-control" placeholder="电话" aria-describedby="basic-addon1">
+                        </div><!-- /emailDiv -->
+                        <div class="input-group">
+                            <input id="positionInput" type="text" class="form-control" placeholder="位置" aria-describedby="basic-addon1">
+                            <span class="input-group-btn">
+                                <button id="searchPositionButton" class="btn btn-default" type="button" onclick="localSearch2()">
+                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                </button><!-- /searchPositionButton -->
+                            </span>
+                            <span class="input-group-btn">
+                                <button id="newSiteButton" class="btn btn-default" type="button" onclick="addSite()">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                </button><!-- /newSiteButton -->
+                            </span>
+                        </div><!-- /positionDiv -->
+                    </form>
                     <div id="search_position_result">
                     </div>
                     <div id="person_detail" style="display:none">
@@ -342,6 +344,14 @@
         local_search.search($("#positionInput").val());
     }
 
+    function addSite() {
+        $('#addSiteForm').ajaxSubmit({
+            success: function (responseText) {
+                alert(reponseText);
+            }
+        });
+    }
+   
 
    
 </script>

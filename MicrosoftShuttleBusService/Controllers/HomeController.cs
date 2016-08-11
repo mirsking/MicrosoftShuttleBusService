@@ -34,10 +34,10 @@ namespace MicrosoftShuttleBusService.Controllers
             return View();
         }
 
-        public String AddSite()
+        public String AddSite(FormCollection collection)
         {
-
-            return "Success";
+            string path = collection["aliasInput"];
+            return path;
         }
     }
 }
