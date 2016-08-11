@@ -75,7 +75,7 @@
                             </button>
                         </span>
                     </div><!-- /returnDiv -->
-                    <form id="addSiteForm" action="AddSite" method="post" target="_blank" >
+                    <form id="addSiteForm" action="/Home/AddSite" method="post" target="_blank" >
                         <div class="input-group soloInput">
                             <input id="aliasInput" name="aliasInput" type="text" class="form-control" placeholder="Alias" aria-describedby="basic-addon1">
                         </div><!-- /aliasDiv -->
@@ -90,7 +90,7 @@
                                 </button><!-- /searchPositionButton -->
                             </span>
                             <span class="input-group-btn">
-                                <button id="newSiteButton" class="btn btn-default" type="button" onclick="addSite()">
+                                <button id="newSiteButton" class="btn btn-default" type="button">
                                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 </button><!-- /newSiteButton -->
                             </span>
@@ -177,6 +177,14 @@
                 $("#sourceInput").attr("readonly", "readonly");
                 $("#destinationInput").removeAttr("readonly");
             }
+        });
+   
+        $("#newSiteButton").click(function () {
+            $('#addSiteForm').ajaxSubmit({
+                success: function (responseText) {
+                    alert(responseText);
+                }
+            });
         });
     });
 </script>
@@ -344,15 +352,4 @@
         var local_search = createLocalSearch(map, "search_position_result", "locateToPlace2");
         local_search.search($("#positionInput").val());
     }
-
-    function addSite() {
-        $('#addSiteForm').ajaxSubmit({
-            success: function (responseText) {
-                alert(reponseText);
-            }
-        });
-    }
-   
-
-   
 </script>
