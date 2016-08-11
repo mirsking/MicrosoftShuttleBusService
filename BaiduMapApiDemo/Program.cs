@@ -24,6 +24,14 @@ namespace BaiduMapApiDemo
 
     }
 
+    class SitePoiInfo : LbsPoiBaseInfo
+    {
+        public string alias;
+        public string phone;
+        public string position;
+
+    }
+
     public class BaiduMapApi
     {
         private static String ak = "AxXlQ1BehjgOnV5GflqAjrs46iawMsUE";
@@ -45,7 +53,7 @@ namespace BaiduMapApiDemo
             var recordIds = new List<string>();
             string[,] data = new string[1, 5] { { lng, lat, position, alias, phone } };
 
-            String str = getSites();
+       
 
             for (int i = 0; i < 1; i++)
             {
@@ -56,8 +64,8 @@ namespace BaiduMapApiDemo
                 var id = table_newSite.AddOneRecord(Double.Parse(data[i, 0]), Double.Parse(data[i, 1]), record);
                 recordIds.Add(id);
             }
+            String str = getSites();
 
-           
             return str;
         }
         public static String getSites()
@@ -76,16 +84,19 @@ namespace BaiduMapApiDemo
 
             table_newSite.CreateGeotable(ak);
 
-            var poiInfo = table_newSite.GetAllPoiInfo<LbsGeotableBaseResponse<CustomPoiInfo>>();
+            var poiInfo = table_newSite.GetAllPoiInfo<LbsGeotableBaseResponse<SitePoiInfo>>();
+
+            
 
             ArrayList eventList = new ArrayList();
-            for (int i = 0; i < 3; i++)
+            foreach (var item in poiInfo.contents)
             {
                 Hashtable ht = new Hashtable();
-                ht.Add("eventid", i + 1);
-                ht.Add("eventname", "圣诞节");
-                ht.Add("eventdate", "2012-12-25");
-                ht.Add("eventlocation", "公司会议中心");
+                ht.Add("lng", (item.location.First()));
+                ht.Add("lat", item.location.Last());
+                ht.Add("Alias", item.alias);
+                ht.Add("Phone", item.phone);
+                ht.Add("Position", item.position);
                 eventList.Add(ht);
             }
             JavaScriptSerializer ser = new JavaScriptSerializer();

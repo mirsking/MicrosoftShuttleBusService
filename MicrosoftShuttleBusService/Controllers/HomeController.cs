@@ -37,8 +37,9 @@ namespace MicrosoftShuttleBusService.Controllers
 
         public String AddSite(FormCollection collection)
         {
-            string path = collection["aliasInput"];
-            return BaiduMapApi.getSites();
+            string alias = collection["aliasInput"];
+
+            return BaiduMapApi.addSite(alias, "","","23","23");
 
 
         }
