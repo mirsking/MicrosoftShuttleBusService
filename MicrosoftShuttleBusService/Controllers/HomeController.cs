@@ -33,5 +33,10 @@ namespace MicrosoftShuttleBusService.Controllers
 
             return View();
         }
+
+        public String AddSite()
+        {
+            return "Success";
+        }
     }
 }
