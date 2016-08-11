@@ -81,27 +81,13 @@
                     <div class="input-group">
                         <input id="positionInput" type="text" class="form-control" placeholder="Position" aria-describedby="basic-addon1">
                         <span class="input-group-btn">
-                            <button id="searchPositionButton" class="btn btn-default" type="button">
+                            <button id="searchPositionButton" class="btn btn-default" type="button" onclick="localSearch2()">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                             </button><!-- /searchPositionButton -->
                         </span>
                     </div><!-- /positionDiv -->
-                    <div>
-                        <div class="row detail">
-                            </br>
-                            <p>人员信息1</p>
-                            </br>
-                        </div>
-                        <div class="row detail">
-                            </br>
-                            <p>人员信息2</p>
-                            </br>
-                        </div>
-                        <div class="row detail">
-                            </br>
-                            <p>人员信息3</p>
-                            </br>
-                        </div>
+                    <div id="positionResultDiv">
+                        
                     </div><!-- /routeInfoDiv -->
                 </div><!-- /newSiteDiv -->
             </div>
@@ -235,22 +221,46 @@
         var myIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300, 157));
         var vectorMarker = new BMap.Marker(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), {icon:myIcon});
         map.addOverlay(vectorMarker);
-        vectorMarker.licontent = "<div><button id='gotoButton' class='btn btn-default' type='button'>" +
+        var tmp_content = item.parentElement.innerHTML;
+        vectorMarker.licontent = tmp_content.substr(0, tmp_content.indexOf("<button")) + "<br /><button id='gotoButton' class='btn btn-default' type='button'>" +
                                 "<span aria-hidden='true'>从这去公司</span>" +
                                 "</button><button id='gotoButton' class='btn btn-default' type='button'>" +
                                 "<span aria-hidden='true'>从公司来这</span>" +
-                                "</button></div>";
+                                "</button>";
         vectorMarker.opts1 = { width: 100 };
         vectorMarker.infoWindow = new BMap.InfoWindow(vectorMarker.licontent, vectorMarker.opts1);
         vectorMarker.openInfoWindow(vectorMarker.infoWindow);
         vectorMarker.addEventListener('click', function () {
             this.openInfoWindow(this.infoWindow);
         });
+    }
+
+    function locateToPlace2(item) {
+        map.centerAndZoom(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), 13);
+        var overlays = map.getOverlays();
+        for (i = 0; i < overlays.length ; i++)
+            map.removeOverlay(overlays[i]);
+        addMarkersInBaiduMap(datas, map);
+        var myIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300, 157));
+        var vectorMarker = new BMap.Marker(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), { icon: myIcon });
+        map.addOverlay(vectorMarker);
+        var tmp_content = item.parentElement.innerHTML;
         
+        vectorMarker.licontent = tmp_content.substr(0, tmp_content.indexOf("<button"))  + "<br /><button id='gotoButton' class='btn btn-default' type='button'>" +
+                                "<span aria-hidden='true'>从这去公司</span>" +
+                                "</button><button id='gotoButton' class='btn btn-default' type='button'>" +
+                                "<span aria-hidden='true'>从公司来这</span>" +
+                                "</button>";
+        vectorMarker.opts1 = { width: 100 };
+        vectorMarker.infoWindow = new BMap.InfoWindow(vectorMarker.licontent, vectorMarker.opts1);
+        vectorMarker.openInfoWindow(vectorMarker.infoWindow);
+        vectorMarker.addEventListener('click', function () {
+            this.openInfoWindow(this.infoWindow);
+        });
     }
 
     var searchLocalResults;
-    function createLocalSearch(map) {
+    function createLocalSearch(map, resultDivID, functionName) {
         /// It's the same usage as the transit search, you can add a callback here or use getResults() after search.
         /// The return type of getResults is LocalResult or array of LocalResult.
         /// links: 1) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/LocalSearch
@@ -269,14 +279,14 @@
                 }
             },
             
-            renderOptions: { map: map, autoViewport: true, panel: "route_result" },
+            renderOptions: { map: map, autoViewport: true, panel: resultDivID },
 
             onResultsHtmlSet: function (container)
             {
                 addressMakers = container.firstChild.firstChild.childNodes;
                 for (i = 0; i < addressMakers.length; i++) {
                     var btn = document.createElement('button');
-                    btn.setAttribute("onclick", "locateToPlace(this)");
+                    btn.setAttribute("onclick", functionName + "(this)");
                     btn.setAttribute("class", "setBtn");
                     btn.setAttribute("style", "font-weight: bold; background-position: -21px -81px;");
                     btn.innerHTML = "选择";
@@ -293,9 +303,14 @@
 
 
     function localSearch() {
-        var local_search = createLocalSearch(map);
+        var local_search = createLocalSearch(map, "route_result", "locateToPlace");
         local_search.search($("#sourceInput").val());
         
+    }
+
+    function localSearch2() {
+        var local_search = createLocalSearch(map, "positionResultDiv", "locateToPlace2");
+        local_search.search($("#positionInput").val());
     }
 
 
