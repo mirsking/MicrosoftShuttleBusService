@@ -134,9 +134,8 @@ namespace BaiduMapApiDemo
             #endregion
 
             #region Get Info
-            var poiInfo = table.GetPoiInfo<LbsGeotableBaseResponse<CustomPoiInfo>>(UInt32.Parse(recordIds[0]));
-            var stationInfo = poiInfo.contents.FirstOrDefault();
-            Console.WriteLine("Get poiInfo BusStation: {0}, BusPic: {1}", stationInfo.BusStation, stationInfo.StationPhoto.big);
+            var poiInfoCollection = table.GetAllPoiInfo<LbsGeotableBaseResponse<CustomPoiInfo>>();
+            var onePoiInfo = poiInfoCollection.contents.FirstOrDefault();
             #endregion
         }
     }
