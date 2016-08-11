@@ -182,7 +182,10 @@
         $("#newSiteButton").click(function () {
             $('#addSiteForm').ajaxSubmit({
                 success: function (responseText) {
-                    alert(responseText);
+                    var myObject = eval('(' + responseText + ')');
+                    for (i = 0; i < myObject.length; i++) {
+                        alert(myObject[i].eventname);
+                    }
                 }
             });
         });
@@ -381,5 +384,32 @@
     function localSearch2() {
         var local_search = createLocalSearch(map, "search_position_result", "locateToPlace2");
         local_search.search($("#positionInput").val());
+    }
+
+
+    function Station(alias, phone, address, longitude, latitude) {
+        this.alias = alias;
+        this.phone = phone;
+        this.address = address;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+    var markersForSites = new Array();
+    function addSitesInBaiduMap(datas, map) {
+        for (i = 0; i < datas.length; i++) {
+            markersForSites.push(new BMap.Marker(new BMap.Point(datas[i].longitude, datas[i].latitude)));
+            map.addOverlay(markersForSites[i]);
+            markersForSites[i].licontent = "<div style=\"width:200px;height:200px;\"><div style=\"float:left\"></div><div style=\"float:right;width:180px;height:200px;\"><h3>" +
+                            datas[i].alias + "</h3><span><strong>Phone:</strong> " + datas[i].phone + "</span> <br /><span><strong>address:</strong> " + datas[i].address + "</span></div></div>";
+            markersForSites[i].opts1 = { width: 200 };
+            markersForSites[i].infoWindow = new BMap.InfoWindow(markersForSites[i].licontent, markersForSites[i].opts1);
+            markersForSites[i].addEventListener('click', function () {
+                this.openInfoWindow(this.infoWindow);
+            });
+        }
+    }
+    function deleteMarkersInBaiduMapForSites(map) {
+        for (i = 0; i < markersForSites.length; i++)
+            map.removeOverlay(markersForSites[i]);
     }
 </script>

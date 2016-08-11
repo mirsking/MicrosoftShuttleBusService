@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using BaiduMapApiDemo;
 
 namespace MicrosoftShuttleBusService.Controllers
 {
@@ -37,7 +38,9 @@ namespace MicrosoftShuttleBusService.Controllers
         public String AddSite(FormCollection collection)
         {
             string path = collection["aliasInput"];
-            return path;
+            return BaiduMapApi.getSites();
+
+
         }
     }
 }
