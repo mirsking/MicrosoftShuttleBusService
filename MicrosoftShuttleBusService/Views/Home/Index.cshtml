@@ -211,41 +211,79 @@
         searchTransit(map, transit, $("#sourceInput").val(), $("#destinationInput").val());
     }
 
+    function locateToPlace(item) {
+        map.centerAndZoom(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), 13);
+        $("#returnFromRouteDetailButton").click();
+        var overlays = map.getOverlays();
+        for (i = 0; i < overlays.length ; i++)
+            map.removeOverlay(overlays[i]);
+        addMarkersInBaiduMap(datas, map);
+        var myIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300, 157));
+        var vectorMarker = new BMap.Marker(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), {icon:myIcon});
+        map.addOverlay(vectorMarker);
+        vectorMarker.licontent = "<div><button id='gotoButton' class='btn btn-default' type='button'>" +
+                                "<span aria-hidden='true'>从这去公司</span>" +
+                                "</button><button id='gotoButton' class='btn btn-default' type='button'>" +
+                                "<span aria-hidden='true'>从公司来这</span>" +
+                                "</button></div>";
+        vectorMarker.opts1 = { width: 100 };
+        vectorMarker.infoWindow = new BMap.InfoWindow(vectorMarker.licontent, vectorMarker.opts1);
+        vectorMarker.openInfoWindow(vectorMarker.infoWindow);
+        vectorMarker.addEventListener('click', function () {
+            this.openInfoWindow(this.infoWindow);
+        });
+        
+    }
+
+    var searchLocalResults;
     function createLocalSearch(map) {
         /// It's the same usage as the transit search, you can add a callback here or use getResults() after search.
         /// The return type of getResults is LocalResult or array of LocalResult.
         /// links: 1) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/LocalSearch
         ///        2) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/LocalResult
-
+        
         var options = {
             onSearchComplete: function (results) {
                 if (local.getStatus() == BMAP_STATUS_SUCCESS) {
                     // 判断状态是否正确
                     var s = [];
+                    searchLocalResults = results;
                     for (var i = 0; i < results.getCurrentNumPois() ; i++) {
-                        s.push(results.getPoi(i).title + ", " + results.getPoi(i).address);
+                        s.push(results.getPoi(i).title + ", " + results.getPoi(i).point.lng + ", " + results.getPoi(i).point.lat);
                     }
-                    document.getElementById("route_result").innerHTML = s.join("<br>");
+                //    document.getElementById("route_result").innerHTML = s.join("<br>");
                 }
             },
             
-            renderOptions: { map: map, autoViewport: true, panel: "route_result" }
-            
+            renderOptions: { map: map, autoViewport: true, panel: "route_result" },
+
+            onResultsHtmlSet: function (container)
+            {
+                addressMakers = container.firstChild.firstChild.childNodes;
+                for (i = 0; i < addressMakers.length; i++) {
+                    var btn = document.createElement('button');
+                    btn.setAttribute("onclick", "locateToPlace(this)");
+                    btn.setAttribute("class", "setBtn");
+                    btn.setAttribute("style", "font-weight: bold; background-position: -21px -81px;");
+                    btn.innerHTML = "选择";
+                    btn.setAttribute("id", i);
+                    addressMakers[i].childNodes[1].appendChild(btn);
+                    container.childNodes[0].childNodes[0].childNodes[i].setAttribute("onmouseover", "this.click()")
+                }
+                container.removeChild(container.childNodes[1]);
+            }
         };
         var local = new BMap.LocalSearch(map, options);
         return local;
     }
 
+
     function localSearch() {
         var local_search = createLocalSearch(map);
         local_search.search($("#sourceInput").val());
+        
     }
 
-    var p1 = new BMap.Point(121.476788, 31.23754);
-    var p2 = new BMap.Point(121.476788, 30.23754);
-    var p3 = new BMap.Point(121.476788, 31.03754);
 
-    var driving = new BMap.DrivingRoute(map, { renderOptions: { map: map, autoViewport: true } });
-    driving.search(p1, p2, { waypoints: [p3] });//waypoints表示途经点
-
+   
 </script>
