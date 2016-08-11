@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BaiduMapSdk.Common;
+using Newtonsoft.Json.Linq;
 
 namespace BaiduMapSdk.Entities
 {
@@ -100,6 +102,20 @@ namespace BaiduMapSdk.Entities
             return res.id;
         }
 
+        public TPoiResponse GetAllPoiInfo<TPoiResponse>() where TPoiResponse : class
+        {
+            var uri = new Uri("http://api.map.baidu.com/geosearch/v3/local");
+            var values = new Dictionary<string, string>();
+            values.Add("ak", Ak);
+            values.Add("geotable_id", TableId);
+            var res = HttpUtils.GetResponse("GET", uri, values);
+            var s = res.GetResponseStream();
+            var sr = new StreamReader(s);
+            string jsonStr = sr.ReadToEnd();
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+            return jss.Deserialize<TPoiResponse>(jsonStr);
+        }
+
         public TPoiResponse GetPoiInfo<TPoiResponse>(uint poiId) where TPoiResponse : class
         {
             var uri = new Uri("http://api.map.baidu.com/geosearch/v3/detail/" + poiId.ToString());
@@ -113,6 +129,8 @@ namespace BaiduMapSdk.Entities
             JavaScriptSerializer jss = new JavaScriptSerializer();
             return jss.Deserialize<TPoiResponse>(jsonStr);
         }
+
+
 
         private string DeleteAllRecord()
         {
