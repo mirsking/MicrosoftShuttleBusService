@@ -38,8 +38,16 @@ namespace MicrosoftShuttleBusService.Controllers
         public String AddSite(FormCollection collection)
         {
             string alias = collection["aliasInput"];
+            string phone = collection["phoneInput"];
+            string address = collection["positionInput"];
+            string lng = collection["lngInput"];
+            string lat = collection["latInput"];
 
-            return BaiduMapApi.addSite(alias, "","","23","23");
+            if (string.IsNullOrEmpty(phone))
+            {
+                return BaiduMapApi.getSites();
+            }
+            return BaiduMapApi.addSite(alias, phone, address, lng, lat);
 
 
         }

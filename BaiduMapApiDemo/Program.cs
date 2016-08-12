@@ -53,8 +53,8 @@ namespace BaiduMapApiDemo
             var recordIds = new List<string>();
             string[,] data = new string[1, 5] { { lng, lat, position, alias, phone } };
 
-       
 
+            String str = getSites();
             for (int i = 0; i < 1; i++)
             {
                 var record = new Dictionary<string, string>();
@@ -64,7 +64,7 @@ namespace BaiduMapApiDemo
                 var id = table_newSite.AddOneRecord(Double.Parse(data[i, 0]), Double.Parse(data[i, 1]), record);
                 recordIds.Add(id);
             }
-            String str = getSites();
+            
 
             return str;
         }

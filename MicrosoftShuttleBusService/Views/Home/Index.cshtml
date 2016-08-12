@@ -30,7 +30,8 @@
                         <span class="input-group-btn">
                             <button id="newSiteViewButton" class="btn btn-default" type="button">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                            </button><!-- /newSiteButton -->
+                            </button>
+                            
                         </span>
                     </div><!-- /input-group -->
                     <div id="search_result">
@@ -80,19 +81,29 @@
                             <input id="aliasInput" name="aliasInput" type="text" class="form-control" placeholder="Alias" aria-describedby="basic-addon1">
                         </div><!-- /aliasDiv -->
                         <div class="input-group soloInput">
-                            <input id="phoneInput" type="text" class="form-control" placeholder="电话" aria-describedby="basic-addon1">
+                            <input id="phoneInput" name="phoneInput" type="text" class="form-control" placeholder="电话" aria-describedby="basic-addon1">
+                        </div><!-- /emailDiv -->
+                        <div class="input-group soloInput">
+                            <input id="lngInput" name="lngInput" type="text" class="form-control" placeholder="lng" aria-describedby="basic-addon1" style="display:none">
+                        </div><!-- /aliasDiv -->
+                        <div class="input-group soloInput">
+                            <input id="latInput" name="latInput" type="text" class="form-control" placeholder="lat" aria-describedby="basic-addon1" style="display:none">
                         </div><!-- /emailDiv -->
                         <div class="input-group">
-                            <input id="positionInput" type="text" class="form-control" placeholder="位置" aria-describedby="basic-addon1">
+                            <input id="positionInput" name="positionInput" type="text" class="form-control" placeholder="位置" aria-describedby="basic-addon1">
                             <span class="input-group-btn">
-                                <button id="searchPositionButton" class="btn btn-default" type="button" onclick="localSearch2()">
+                                <button id="searchPositionButton" class="btn btn-default" type="button" >
                                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                                 </button><!-- /searchPositionButton -->
+                                
                             </span>
                             <span class="input-group-btn">
                                 <button id="newSiteButton" class="btn btn-default" type="button">
                                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 </button><!-- /newSiteButton -->
+                                <button id="newSiteButtonHide" class="btn btn-default" type="button" style="display:none">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                </button><!-- /newSiteButtonHide -->
                             </span>
                         </div><!-- /positionDiv -->
                     </form>
@@ -141,6 +152,7 @@
         });
 
         $("#searchPositionButton").click(function () {
+            AddSiteFlag = 0;
             localSearch2();
         });
 
@@ -179,15 +191,23 @@
             }
         });
    
-        $("#newSiteButton").click(function () {
+        $("#newSiteButtonHide").click(function () {
             $('#addSiteForm').ajaxSubmit({
                 success: function (responseText) {
+                    var datasForSite = new Array();
                     var myObject = eval('(' + responseText + ')');
                     for (i = 0; i < myObject.length; i++) {
-                        alert(myObject[i].Alias);
+                        datasForSite[i] = (new FTESite(myObject[i].Alias, myObject[i].Phone, myObject[i].Position, myObject[i].lng, myObject[i].lat));
                     }
+                    addSitesInBaiduMap(datasForSite, map);
                 }
             });
+        });
+
+        
+        $("#newSiteButton").click(function () {
+            AddSiteFlag = 1;
+            localSearch2();
         });
     });
 </script>
@@ -310,13 +330,14 @@
         });
     }
 
+    var AddSiteFlag = 0;
     function locateToPlace2(item) {
         map.centerAndZoom(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), 13);
         $("#search_position_result").html("");
         var overlays = map.getOverlays();
         for (i = 0; i < overlays.length ; i++)
             map.removeOverlay(overlays[i]);
-        addMarkersInBaiduMap(datas, map);
+        
         var myIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300, 157));
         var vectorMarker = new BMap.Marker(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), { icon: myIcon });
         map.addOverlay(vectorMarker);
@@ -333,6 +354,12 @@
         vectorMarker.addEventListener('click', function () {
             this.openInfoWindow(this.infoWindow);
         });
+        $("#lngInput").val(searchLocalResults.getPoi(item.id).point.lng);
+        $("#latInput").val(searchLocalResults.getPoi(item.id).point.lat);
+    //    if (AddSiteFlag == 1) {
+    //        AddSiteFlag = 0;
+        $("#newSiteButtonHide").click();
+    //    }
     }
 
     var searchLocalResults;
@@ -387,7 +414,7 @@
     }
 
 
-    function Station(alias, phone, address, longitude, latitude) {
+    function FTESite(alias, phone, address, longitude, latitude) {
         this.alias = alias;
         this.phone = phone;
         this.address = address;
@@ -396,6 +423,7 @@
     }
     var markersForSites = new Array();
     function addSitesInBaiduMap(datas, map) {
+        markersForSites = [];
         for (i = 0; i < datas.length; i++) {
             markersForSites.push(new BMap.Marker(new BMap.Point(datas[i].longitude, datas[i].latitude)));
             map.addOverlay(markersForSites[i]);
