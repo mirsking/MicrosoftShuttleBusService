@@ -39,17 +39,25 @@ namespace BaiduMapSdk.Entities
         public uint status;
         public uint total;
         public uint size;
-        public ICollection<LbsPoiBaseInfo> contents;
+        public IEnumerable<LbsPoiBaseInfo> contents;
     }
     public class LbsGeotable
     {
+        public string Ak { get; set; }
         public string Name { get; set; }
         public ICollection<LbsGeotableColumn> Columns { get; set; }
-        private LBSYunNet _lbsYunNet;
         public string TableId { get; set; }
-        public string Ak { get; private set; }
+        private LBSYunNet _lbsYunNet;
 
-        public string CreateGeotable(string ak)
+        public LbsGeotable(string ak, string tableName, ICollection<LbsGeotableColumn> columns)
+        {
+            Ak = ak;
+            Name = tableName;
+            Columns = columns;
+            CreateGeotable(Ak);
+        }
+
+        private string CreateGeotable(string ak)
         {
             Ak = ak;
             _lbsYunNet = new LBSYunNet(ak);
@@ -68,7 +76,7 @@ namespace BaiduMapSdk.Entities
             }
 
             if (TableId == null) return null;
-            
+
             #region add columns
 
             foreach (var col in Columns)
@@ -89,7 +97,6 @@ namespace BaiduMapSdk.Entities
             }
 
             #endregion
-            
 
             System.Diagnostics.Debug.WriteLine("Table id is: " + TableId);
             return TableId;
@@ -102,18 +109,50 @@ namespace BaiduMapSdk.Entities
             return res.id;
         }
 
-        public TPoiResponse GetAllPoiInfo<TPoiResponse>() where TPoiResponse : class
+        public LbsGeotableBaseResponse<TPoiInfoType> GetAllPoiInfo<TPoiInfoType>()
         {
             var uri = new Uri("http://api.map.baidu.com/geosearch/v3/local");
             var values = new Dictionary<string, string>();
             values.Add("ak", Ak);
             values.Add("geotable_id", TableId);
-            var res = HttpUtils.GetResponse("GET", uri, values);
-            var s = res.GetResponseStream();
-            var sr = new StreamReader(s);
-            string jsonStr = sr.ReadToEnd();
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-            return jss.Deserialize<TPoiResponse>(jsonStr);
+            //max page size
+            values.Add("page_size", "2");
+            var page_index = 0;
+            var pageIndexStr = "page_index";
+            values.Add(pageIndexStr, page_index.ToString());
+
+            LbsGeotableBaseResponse<TPoiInfoType> poiResponse = null;
+            uint maxPageNum = 0;
+            while (true)
+            {
+                var res = HttpUtils.GetResponse("GET", uri, values);
+                var s = res.GetResponseStream();
+                var sr = new StreamReader(s);
+                string jsonStr = sr.ReadToEnd();
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                if (page_index == 0)
+                {
+                    poiResponse = jss.Deserialize<LbsGeotableBaseResponse<TPoiInfoType>>(jsonStr);
+                    if (poiResponse.size == 0)
+                    {
+                        break;
+                    }
+                    maxPageNum = poiResponse.total/poiResponse.size;
+                }
+                else
+                {
+                    var tmp = jss.Deserialize<LbsGeotableBaseResponse<TPoiInfoType>>(jsonStr);
+                    poiResponse.contents = poiResponse.contents.Concat(tmp.contents).ToList();
+                }
+
+                if (page_index++ > maxPageNum)
+                {
+                    break;
+                }
+                values[pageIndexStr] = page_index.ToString();
+            }
+
+            return poiResponse;
         }
 
         public TPoiResponse GetPoiInfo<TPoiResponse>(uint poiId) where TPoiResponse : class
