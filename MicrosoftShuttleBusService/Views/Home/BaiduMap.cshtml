@@ -68,9 +68,16 @@
             var walk = plan.getRoute(i);
             if (walk.getDistance(false) > 0){
                 // 步行线路有可能为0
-                var polyline = new BMap.Polyline(walk.getPath(), {lineColor: "green"});
+				var paths = walk.getPath();
+                var polyline = new BMap.Polyline(paths, {strokeColor: "green", strokeStyle: "dashed", enableMassClear: true});
                 polylines.push(polyline);
                 map.addOverlay(polyline);
+				// Here add the route's start and end point as a marker
+				var myIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/location.gif", new BMap.Size(14,23));
+				var start = new BMap.Marker(paths[0], {icon: myIcon});
+				var end = new BMap.Marker(paths[paths.length-1], {icon: myIcon});
+				map.addOverlay(start);
+				map.addOverlay(end);
             }
         }
 
@@ -125,6 +132,8 @@
             onSearchComplete: function (results) {
                 if (local.getStatus() == BMAP_STATUS_SUCCESS) {
                     // 判断状态是否正确
+					// Have to clear the overlays here to clear the routes
+					map.clearOverlays();
                     var s = [];
                     for (var i = 0; i < results.getCurrentNumPois(); i++) {
                         s.push(results.getPoi(i).title + ", " + results.getPoi(i).address);
@@ -147,10 +156,10 @@
     // route lines array, not used right now
     var polylines = [];
 	var transit = createTransit(map);
-	//searchTransit(map, transit, "虹桥火车站", "微软上海");
+	searchTransit(map, transit, "虹桥火车站", "微软上海");
 
     var local_search = createLocalSearch(map);
-    //local_search.search("虹桥火车站");
+    local_search.search("虹桥火车站");
 
     ///
     var p1 = new BMap.Point(121.476788,31.23754);
@@ -158,12 +167,14 @@
     var p3 = new BMap.Point(121.476788,31.03754);
 
     var driving = new BMap.DrivingRoute(map, {renderOptions:{map: map, autoViewport: true}});
-    driving.search(p1, p2,{waypoints:[p3]});//waypoints表示途经点
+    //driving.search(p1, p2,{waypoints:[p3]});//waypoints表示途经点
 
     map.addEventListener("click", function(e){
         var pt = e.point;
         alert("GPS is: " + pt.lng + ", " + pt.lat);
     });
+	
+	map.clearOverlays();
 
 </script>
 
