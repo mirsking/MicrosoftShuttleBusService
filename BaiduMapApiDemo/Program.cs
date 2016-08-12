@@ -88,13 +88,13 @@ namespace BaiduMapApiDemo
             string ak = "AxXlQ1BehjgOnV5GflqAjrs46iawMsUE";
             var columns = new List<LbsGeotableColumn>()
             {
-                new LbsGeotableColumn() {Name = "BusStation", Key="BusStation", Type=(int)ColumnType.IsString, MaxLength=20},
+                new LbsGeotableColumn() {Name = "BusStation", Key="BusStation", Type=(int)ColumnType.IsString, MaxLength=20, IsSearchField=1},
                 new LbsGeotableColumn() {Name = "BusType", Key="BusType", Type=(int)ColumnType.IsInt64, MaxLength = 20},
                 new LbsGeotableColumn() { Name = "OnboardTime", Key="OnboardTime", Type= (int)ColumnType.IsString, MaxLength = 20 },
                 new LbsGeotableColumn() {Name = "StationPhoto", Key= "StationPhoto", Type=(int)ColumnType.IsPicUrl }
             };
 
-            var table = new LbsGeotable(ak, "MSBus", columns);
+            var table = new LbsGeotable(ak, "MSBus1", columns);
 
             #endregion
 

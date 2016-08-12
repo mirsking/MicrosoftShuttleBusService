@@ -116,7 +116,7 @@ namespace BaiduMapSdk.Entities
             values.Add("ak", Ak);
             values.Add("geotable_id", TableId);
             //max page size
-            values.Add("page_size", "2");
+            values.Add("page_size", "50");
             var page_index = 0;
             var pageIndexStr = "page_index";
             values.Add(pageIndexStr, page_index.ToString());
@@ -169,7 +169,42 @@ namespace BaiduMapSdk.Entities
             return jss.Deserialize<TPoiResponse>(jsonStr);
         }
 
+        public LbsGeotableBaseResponse<TPoiInfoType> GetPoiInfoByProperties<TPoiInfoType>(IDictionary<string, string> properties)
+        {
+            LbsGeotableBaseResponse<TPoiInfoType> result = null;
 
+            var uri = new Uri("http://api.map.baidu.com/geosearch/v3/local");
+            var values = new Dictionary<string, string>();
+            values.Add("ak", Ak);
+            values.Add("geotable_id", TableId);
+            //max page size
+            values.Add("page_size", "50");
+            var page_index = 0;
+            var pageIndexStr = "page_index";
+            values.Add(pageIndexStr, page_index.ToString());
+            /*
+            LbsGeotableBaseResponse<TPoiInfoType> poiResponse = null;
+            uint maxPageNum = 0;
+            while (true)
+            {
+                var res = HttpUtils.GetResponse("GET", uri, values);
+                var s = res.GetResponseStream();
+            */
+            return result;
+        }
+
+        private bool DeleteRecordById(uint id)
+        {
+            var res = _lbsYunNet.PoiDelete(id, TableId);
+            if (res.status == 0)
+            {
+                return true;
+            }
+            else 
+            {
+                return false; 
+            }
+        }
 
         private string DeleteAllRecord()
         {
