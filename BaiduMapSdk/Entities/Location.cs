@@ -8,7 +8,8 @@ namespace BaiduMapSdk.Entities
 {
     public class Location
     {
-        public double Longitude;
-        public double Latitude;
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
     }
+
 }
