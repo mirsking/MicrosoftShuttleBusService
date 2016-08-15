@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BaiduMapApiDemo;
+using BusManager;
+using BaiduMapSdk.Entities;
 
 namespace MicrosoftShuttleBusService.Controllers
 {
@@ -50,6 +52,22 @@ namespace MicrosoftShuttleBusService.Controllers
             return BaiduMapApi.addSite(alias, phone, address, lng, lat);
 
 
+        }
+
+        public string AllStationsInJson()
+        {
+            return BusUtil.AllStationsToJson();
+        }
+
+
+        public string BestStationsInJson(FormCollection collection)
+        {
+            double x = 0;
+            double y = 0;
+            Point l = new Point(x, y);
+            var allStations = DataAccess.ReadAllStations();
+            Station MicroSoft = allStations[4];
+            return BusUtil.BestStationsToJson(l, MicroSoft);
         }
     }
 }

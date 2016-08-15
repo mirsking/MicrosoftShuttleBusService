@@ -196,6 +196,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BusManager\BusUtil.cs" />
+    <Compile Include="Controllers\BusManager\DataAccess.cs" />
+    <Compile Include="Controllers\BusManager\Point.cs" />
+    <Compile Include="Controllers\BusManager\Route.cs" />
+    <Compile Include="Controllers\BusManager\Station.cs" />
+    <Compile Include="Controllers\BusManager\XmlUtil.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
@@ -286,6 +292,10 @@
     <ProjectReference Include="..\BaiduMapApiDemo\BaiduMapApiDemo.csproj">
       <Project>{76fdf076-b8e8-43ee-a4a3-57ff320a7e75}</Project>
       <Name>BaiduMapApiDemo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BaiduMapSdk\BaiduMapSdk.csproj">
+      <Project>{76d8f04a-2b6c-42cf-982c-5cab1ce810fe}</Project>
+      <Name>BaiduMapSdk</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
