@@ -34,59 +34,31 @@ namespace BaiduMapApiDemo
 
     public class BaiduMapApi
     {
-        private static String ak = "AxXlQ1BehjgOnV5GflqAjrs46iawMsUE";
-        public static String addSite(string alias, string phone, string position, string lng, string lat)
+        #region  Table Defination
+        static string ak = "AxXlQ1BehjgOnV5GflqAjrs46iawMsUE";
+        static IList<LbsGeotableColumn> columns = new List<LbsGeotableColumn>()
         {
-            var table_newSite = new LbsGeotable()
-            {
-                Name = "MBBus_NewSite",
-                Columns = new List<LbsGeotableColumn>()
-                {
-                    new LbsGeotableColumn() { Name = "Alias", Key="Alias", Type=(int)ColumnType.IsString, MaxLength=20},
-                    new LbsGeotableColumn() { Name = "Phone", Key="Phone", Type=(int)ColumnType.IsInt64, MaxLength = 20},
-                    new LbsGeotableColumn() { Name = "Position", Key="Position", Type= (int)ColumnType.IsString, MaxLength = 20 },
-                }
-            };
+            new LbsGeotableColumn() { Name = "Alias", Key="Alias", Type=(int)ColumnType.IsString, MaxLength=20},
+            new LbsGeotableColumn() { Name = "Phone", Key="Phone", Type=(int)ColumnType.IsInt64, MaxLength = 20},
+            new LbsGeotableColumn() { Name = "Position", Key="Position", Type= (int)ColumnType.IsString, MaxLength = 20 },
+        };
+        #endregion
 
-            table_newSite.CreateGeotable(ak);
+        private static LbsGeotable tableNewSite = new LbsGeotable(ak, "MBBus_NewSite", columns);
 
-            var recordIds = new List<string>();
-            string[,] data = new string[1, 5] { { lng, lat, position, alias, phone } };
-
-
-            String str = getSites();
-            for (int i = 0; i < 1; i++)
-            {
-                var record = new Dictionary<string, string>();
-                record.Add("Position", data[i, 2]);
-                record.Add("Alias", data[i, 3]);
-                record.Add("Phone", data[i, 4]);
-                var id = table_newSite.AddOneRecord(Double.Parse(data[i, 0]), Double.Parse(data[i, 1]), record);
-                recordIds.Add(id);
-            }
-            
-
-            return str;
+        public static string addSite(string alias, string phone, string position, string lng, string lat)
+        {
+            var record = new Dictionary<string, string>();
+            record.Add("Position", position);
+            record.Add("Alias", alias);
+            record.Add("Phone", phone);   
+            var id = tableNewSite.AddOneRecord(Double.Parse(lng), Double.Parse(lat), record);
+            return id;
         }
+
         public static String getSites()
         {
-            
-            var table_newSite = new LbsGeotable()
-            {
-                Name = "MBBus_NewSite",
-                Columns = new List<LbsGeotableColumn>()
-                {
-                    new LbsGeotableColumn() { Name = "Alias", Key="Alias", Type=(int)ColumnType.IsString, MaxLength=20},
-                    new LbsGeotableColumn() { Name = "Phone", Key="Phone", Type=(int)ColumnType.IsInt64, MaxLength = 20},
-                    new LbsGeotableColumn() { Name = "Position", Key="Position", Type= (int)ColumnType.IsString, MaxLength = 20 },
-                }
-            };
-
-            table_newSite.CreateGeotable(ak);
-
-            var poiInfo = table_newSite.GetAllPoiInfo<LbsGeotableBaseResponse<SitePoiInfo>>();
-
-            
+            var poiInfo = tableNewSite.GetAllPoiInfo<SitePoiInfo>();
 
             ArrayList eventList = new ArrayList();
             foreach (var item in poiInfo.contents)
@@ -99,6 +71,7 @@ namespace BaiduMapApiDemo
                 ht.Add("Position", item.position);
                 eventList.Add(ht);
             }
+
             JavaScriptSerializer ser = new JavaScriptSerializer();
             String jsonStr = ser.Serialize(eventList);
             return jsonStr;
@@ -109,23 +82,19 @@ namespace BaiduMapApiDemo
     {
         static void Main(string[] args)
         {
-            var ak = "AxXlQ1BehjgOnV5GflqAjrs46iawMsUE";
 
             #region create table
 
-            var table = new LbsGeotable()
+            string ak = "AxXlQ1BehjgOnV5GflqAjrs46iawMsUE";
+            var columns = new List<LbsGeotableColumn>()
             {
-                Name = "MSBus",
-                Columns = new List<LbsGeotableColumn>()
-                {
-                    new LbsGeotableColumn() {Name = "BusStation", Key="BusStation", Type=(int)ColumnType.IsString, MaxLength=20},
-                    new LbsGeotableColumn() {Name = "BusType", Key="BusType", Type=(int)ColumnType.IsInt64, MaxLength = 20},
-                    new LbsGeotableColumn() { Name = "OnboardTime", Key="OnboardTime", Type= (int)ColumnType.IsString, MaxLength = 20 },
-                    new LbsGeotableColumn() {Name = "StationPhoto", Key= "StationPhoto", Type=(int)ColumnType.IsPicUrl }
-                }
+                new LbsGeotableColumn() {Name = "BusStation", Key="BusStation", Type=(int)ColumnType.IsString, MaxLength=20},
+                new LbsGeotableColumn() {Name = "BusType", Key="BusType", Type=(int)ColumnType.IsInt64, MaxLength = 20},
+                new LbsGeotableColumn() { Name = "OnboardTime", Key="OnboardTime", Type= (int)ColumnType.IsString, MaxLength = 20 },
+                new LbsGeotableColumn() {Name = "StationPhoto", Key= "StationPhoto", Type=(int)ColumnType.IsPicUrl }
             };
 
-            table.CreateGeotable(ak);
+            var table = new LbsGeotable(ak, "MSBus", columns);
 
             #endregion
 
@@ -152,16 +121,16 @@ namespace BaiduMapApiDemo
             //parsed json
             var origin = new Location { Longitude = 40.056878, Latitude = 116.30815 };
             var destination = new Location { Longitude = 39.915285, Latitude = 116.403857 };
-            var time = WebApiDirection.GetDirectionTime(origin, destination, ak);
+            var time = WebApiDirection.GetDirectionTime(origin, destination, table.Ak);
             Console.WriteLine("From 百度大厦 to 天安门 needs time: {0} s", time);
 
             //return json directly, you can see the json format from here http://lbsyun.baidu.com/index.php?title=webapi/direction-api#.E5.85.AC.E4.BA.A4.E8.B7.AF.E5.BE.84.E8.A7.84.E5.88.92.E8.BF.94.E5.9B.9E.E5.80.BC.E8.AF.B4.E6.98.8E
-            var json = WebApiDirection.GetDirection(origin, destination, ak);
+            var json = WebApiDirection.GetDirection(origin, destination, table.Ak);
             Console.Write("Json is \n" + json);
             #endregion
 
             #region Get Info
-            var poiInfoCollection = table.GetAllPoiInfo<LbsGeotableBaseResponse<CustomPoiInfo>>();
+            var poiInfoCollection = table.GetAllPoiInfo<CustomPoiInfo>();
             var onePoiInfo = poiInfoCollection.contents.FirstOrDefault();
             #endregion
         }
