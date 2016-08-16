@@ -162,6 +162,12 @@ namespace BusManager
             return JsonConvert.SerializeObject(allStations);
         }
 
+        public static string AllRoutesToJson()
+        {
+            List<Route> allRoutes = DataAccess.ReadAllRoutes();
+            return JsonConvert.SerializeObject(allRoutes);
+        }
+
         public static void AddNewPoint(double x, double y)
         {
             new Point(x, y);

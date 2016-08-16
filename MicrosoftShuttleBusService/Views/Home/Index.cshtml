@@ -26,12 +26,17 @@
                             <button id="detailRouteButton" class="btn btn-default" type="button">
                                 <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
                             </button>
-                        </span>*@ 
+                        </span>*@
                         <span class="input-group-btn">
                             <button id="newSiteViewButton" class="btn btn-default" type="button">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true">
+                                </span>
                             </button>
-                            
+                        </span>
+                        <span class="input-group-btn">
+                            <button id="viewGpsButton" class="btn btn-default" type="button">
+                                    <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+                            </button>
                         </span>
                     </div><!-- /input-group -->
                     <div id="search_result">
@@ -99,7 +104,7 @@
                                 <button id="searchPositionButton" class="btn btn-default" type="button" >
                                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                                 </button><!-- /searchPositionButton -->
-                                
+
                             </span>
                             <span class="input-group-btn">
                                 <button id="newSiteButton" class="btn btn-default" type="button">
@@ -131,6 +136,19 @@
                         </div>
                     </div><!-- /routeInfoDiv -->
                 </div><!-- /newSiteDiv -->
+
+                <div id="viewGpsDiv" class="col-md-10" style="display:none">
+                    <select id="routeSelector">
+                    </select>
+                    <span class="input-group-btn">
+                        <button id="viewRouteGpsButton" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+                        </button>
+                        <button id="returnFromGpsViewerButton" class="btn btn-default" type="button">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span><!-- return -->
+                        </button>
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -172,6 +190,27 @@
             $("#newSiteDiv").css("display", "");
         });
 
+        //==========view Gps begin===============//
+        $("#viewGpsButton").click(function() {
+            $("#searchDiv").css("display", "none");
+            $("#routeDetailDiv").css("display", "none");
+            $("#viewGpsDiv").css("display", "");
+        });
+
+        $("#returnFromGpsViewerButton").click(function () {
+            $("#searchDiv").css("display", "");
+            $("#viewGpsDiv").css("display", "none");
+        });
+
+        //show gps info
+        $("#viewRouteGpsButton")
+            .click(function() {
+                var route = $("#routeSelector").val();
+                showGPS(route);
+            });
+
+        //==========view Gps end===============//
+
         $("#returnFromRouteDetailButton").click(function () {
             $("#searchDiv").css("display", "");
             $("#routeDetailDiv").css("display", "none");
@@ -200,7 +239,7 @@
                 $("#destinationInput").removeAttr("readonly");
             }
         });
-   
+
         $("#newSiteButtonHide").click(function () {
             
             $('#addSiteForm').ajaxSubmit({
@@ -215,7 +254,7 @@
             });
         });
 
-        
+
         $("#newSiteButton").click(function () {
             alias = $('#aliasInput').val();
             alias = alias.replace(/(^\s*)|(\s*$)/g, "");
@@ -258,9 +297,33 @@
                 }
                 datas[i] = new Station(myObject[i].Name, "http://7xnluw.com1.z0.glb.clouddn.com/MSShuttleBus/" + myObject[i].ToCompPic.substr(0, myObject[i].ToCompPic.indexOf('.')) + ".png", "Route " + myObject[i].Route, arriveTime, myObject[i].LocX, myObject[i].LocY);
             }
-            addMarkersInBaiduMap(datas, map);
+            //addMarkersInBaiduMap(datas, map);
         };
         xmlhttp.send();
+
+        // get all routes
+        var routesXmlHttp = new XMLHttpRequest();
+        routesXmlHttp.open('GET', '/Home/AllRoutesInJson', true);
+        routesXmlHttp.onreadystatechange = function () {
+            if (XMLHttpRequest.DONE != routesXmlHttp.readyState) {
+                return;
+            }
+            if (200 != routesXmlHttp.status) {
+                return;
+            }
+            var labels = new Array();
+            var values = new Array();
+            var myObject = eval('(' + routesXmlHttp.responseText + ')');
+            for (i = 0; i < myObject.length; i++) {
+                var station0 = myObject[i].Stations[0];
+                var value = (station0.IsRoute ? "R" : "RT") + station0.Route;
+                var label = value + "\t" + station0.Name;
+                values.push(value);
+                labels.push(label);
+            }
+            addRoutesIntoRouteSelector(labels, values);
+        };
+        routesXmlHttp.send();
     });
 </script>
 
@@ -291,7 +354,7 @@
         return map;
     }
 
-    
+
     // datas contain all the info for each station
     function addMarkersInBaiduMap(datas, map) {
         for (i = 0; i < datas.length; i++) {
@@ -382,7 +445,7 @@
         transit.search("微软上海分公司", new BMap.Point(lng, lat));
     }
 
-   
+
 
     function search() {
         var transit = createTransit(map);
@@ -424,12 +487,11 @@
         var overlays = map.getOverlays();
         for (i = 0; i < overlays.length ; i++)
             map.removeOverlay(overlays[i]);
-        
+
         var myIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300, 157));
         var vectorMarker = new BMap.Marker(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), { icon: myIcon });
         map.addOverlay(vectorMarker);
         var tmp_content = item.parentElement.innerHTML;
-        
         vectorMarker.licontent = tmp_content.substr(0, tmp_content.indexOf("<button")) + "<br /><button id='gotoButton' class='btn btn-default' type='button' onclick='toMicrosoft(" +
                                 searchLocalResults.getPoi(item.id).point.lng + "," + searchLocalResults.getPoi(item.id).point.lat + ",\"" +
                                 searchLocalResults.getPoi(item.id).address + "\")'" +
@@ -459,7 +521,7 @@
         /// The return type of getResults is LocalResult or array of LocalResult.
         /// links: 1) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/LocalSearch
         ///        2) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/LocalResult
-        
+
         var options = {
             onSearchComplete: function (results) {
                 if (local.getStatus() == BMAP_STATUS_SUCCESS) {
@@ -531,4 +593,38 @@
         for (i = 0; i < markersForSites.length; i++)
             map.removeOverlay(markersForSites[i]);
     }
+
+
+    //================show GPS begin===================//
+    function addRoutesIntoRouteSelector(routeNames, routeIds) {
+        for (var i=0; i< routeNames.length; i++) {
+            var opt = document.createElement('option');
+            opt.value = routeIds[i];
+            opt.innerHTML = routeNames[i];
+            var selector = document.getElementById("routeSelector");
+            selector.appendChild(opt);
+        }
+    }
+
+    function addGpsMarker(point, data) {
+        var customIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300, 157));
+        var gpsMarker = new BMap.Marker(point, { icon: customIcon});
+        map.addOverlay(gpsMarker);
+    }
+
+    function showGPS(routeId) {
+
+        var points = new Array();
+        points[0] = { lng: 121.450358, lat: 31.1021985, datetime: "10:16:34" };
+        points[1] = { lng: 121.4503462, lat: 31.102254, datetime: "10:16:36" };
+        points[2] = { lng: 121.4503047, lat: 31.10233617, datetime: "10:16:37" };
+
+
+        for (var i=0; i<points.length; i++) {
+            addGpsMarker(new BMap.Point(points[i].lng, points[0].lat));
+        }
+    }
+    //================show GPS end===================//
+
+
 </script>

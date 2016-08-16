@@ -12,9 +12,10 @@ namespace MicrosoftShuttleBusService.Controllers
     public class HomeController : Controller
     {
         public static string HomeDirectory = "";
+
         public ActionResult Index()
         {
-            
+
             return View();
         }
 
@@ -58,12 +59,20 @@ namespace MicrosoftShuttleBusService.Controllers
 
         public string AllStationsInJson()
         {
-          
+
             if (string.IsNullOrEmpty(HomeDirectory))
                 HomeDirectory = Server.MapPath("~/");
             return BusUtil.AllStationsToJson();
         }
 
+        public string AllRoutesInJson()
+        {
+            if (string.IsNullOrEmpty(HomeDirectory))
+            {
+                HomeDirectory = Server.MapPath("~/");
+            }
+            return BusUtil.AllRoutesToJson();
+        }
 
         public String BestStationsInJson(FormCollection collection)
         {
