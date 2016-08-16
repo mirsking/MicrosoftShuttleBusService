@@ -156,6 +156,12 @@
         });
 
         $("#searchPositionButton").click(function () {
+            position = $('#positionInput').val();
+            position = position.replace(/(^\s*)|(\s*$)/g, "");
+            if (position == null || position == "") {
+                alert("位置 不能为空");
+                return;
+            }
             AddSiteFlag = 0;
             localSearch2();
         });
@@ -196,6 +202,7 @@
         });
    
         $("#newSiteButtonHide").click(function () {
+            
             $('#addSiteForm').ajaxSubmit({
                 success: function (responseText) {
                     var datasForSite = new Array();
@@ -210,6 +217,24 @@
 
         
         $("#newSiteButton").click(function () {
+            alias = $('#aliasInput').val();
+            alias = alias.replace(/(^\s*)|(\s*$)/g, "");
+            if (alias == null || alias == "") {
+                alert("Alias 不能为空");
+                return;
+            }
+            phone = $('#phoneInput').val();
+            phone = phone.replace(/(^\s*)|(\s*$)/g, "");
+            if (phone == null || phone == "") {
+                alert("Phone 不能为空");
+                return;
+            }
+            position = $('#positionInput').val();
+            position = position.replace(/(^\s*)|(\s*$)/g, "");
+            if (position == null || position == "") {
+                alert("位置 不能为空");
+                return;
+            }
             AddSiteFlag = 1;
             localSearch2();
         });
@@ -405,10 +430,14 @@
         map.addOverlay(vectorMarker);
         var tmp_content = item.parentElement.innerHTML;
         
-        vectorMarker.licontent = tmp_content.substr(0, tmp_content.indexOf("<button"))  + "<br /><button id='gotoButton' class='btn btn-default' type='button'>" +
-                                "<span aria-hidden='true'>从这去公司</span>" +
-                                "</button><button id='gotoButton' class='btn btn-default' type='button'>" +
-                                "<span aria-hidden='true'>从公司来这</span>" +
+        vectorMarker.licontent = tmp_content.substr(0, tmp_content.indexOf("<button")) + "<br /><button id='gotoButton' class='btn btn-default' type='button' onclick='toMicrosoft(" +
+                                searchLocalResults.getPoi(item.id).point.lng + "," + searchLocalResults.getPoi(item.id).point.lat + ",\"" +
+                                searchLocalResults.getPoi(item.id).address + "\")'" +
+                                "><span aria-hidden='true'>从这去公司</span>" +
+                                "</button><button id='gotoButton' class='btn btn-default' type='button' onclick='fromMicrosoftToHere(" +
+                                searchLocalResults.getPoi(item.id).point.lng + "," + searchLocalResults.getPoi(item.id).point.lat + ",\"" +
+                                searchLocalResults.getPoi(item.id).address + "\")'" +
+                                "><span aria-hidden='true'>从公司来这</span>" +
                                 "</button>";
         vectorMarker.opts1 = { width: 100 };
         vectorMarker.infoWindow = new BMap.InfoWindow(vectorMarker.licontent, vectorMarker.opts1);
