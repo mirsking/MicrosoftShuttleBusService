@@ -22,11 +22,11 @@
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                             </button><!-- /searchButton -->
                         </span>
-                        <span class="input-group-btn">
+                        @*<span class="input-group-btn">
                             <button id="detailRouteButton" class="btn btn-default" type="button">
                                 <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
-                            </button><!-- /detailRouteButton -->
-                        </span>
+                            </button>
+                        </span>*@ 
                         <span class="input-group-btn">
                             <button id="newSiteViewButton" class="btn btn-default" type="button">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
@@ -46,26 +46,30 @@
                             </button>
                         </span>
                     </div><!-- /returnDiv -->
-                    <div class="input-group">
-                        <input id="sourceInput" type="text" class="form-control" placeholder="起点" aria-describedby="basic-addon1">
-                        <span class="input-group-btn">
-                            <span class="glyphicon glyphicon-sort" aria-hidden="true">
-                                <button id="exchangeButton" class="btn btn-default" type="button">
-                                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                    <form id="searchRouteForm" action="/Home/BestStationsInJson" method="post" target="_blank">
+                        <input id="lat" name="lat" type="hidden" class="form-control" aria-describedby="basic-addon1">
+                        <input id="lng" name="lng" type="hidden" class="form-control" aria-describedby="basic-addon1">
+                        <div class="input-group">
+                            <input id="sourceInput" name="sourceInput" type="text" class="form-control" placeholder="起点" aria-describedby="basic-addon1">
+                            <span class="input-group-btn">
+                                <span class="glyphicon glyphicon-sort" aria-hidden="true">
+                                    <button id="exchangeButton" class="btn btn-default" type="button">
+                                        <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                                    </button>
+                                </span>
+                            </span>
+                        </div><!-- /sourceDiv -->
+                        <div class="input-group">
+                            <input id="destinationInput" name="destinationInput" type="text" class="form-control" placeholder="终点" aria-describedby="basic-addon1" readonly="readonly">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" onclick="search()">
+                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                                 </button>
                             </span>
-                        </span>
-                    </div><!-- /sourceDiv -->
-                    <div class="input-group">
-                        <input id="destinationInput" type="text" class="form-control" placeholder="终点" aria-describedby="basic-addon1" readonly="readonly">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" onclick="search()">
-                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                            </button>
-                        </span>
-                    </div><!-- /destinationDiv -->
-                    <div id="route_result">
-                    </div><!-- /routeInfoDiv -->
+                        </div><!-- /destinationDiv -->
+                        <div id="route_result">
+                        </div><!-- /routeInfoDiv -->
+                    </form>
                 </div><!-- /routeDeatailDiv -->
 
                 <div id="newSiteDiv" class="col-md-10" style="display:none">
@@ -135,7 +139,7 @@
 <script>
     $(document).ready(function () {
         var flag = true;
-        $("#destinationInput").val("微软");
+        $("#destinationInput").val("微软上海分公司");
 
         $("#detailRouteButton").click(function () {
             $("#searchDiv").css("display", "none");
@@ -297,6 +301,38 @@
     }
 
     function toMicrosoft(lng, lat, address) {
+        $("#lng").val(lng);
+        $("#lat").val(lat);
+        $('#searchRouteForm').ajaxSubmit({
+            success: function (responseText) {
+                //responseText = '[[{"LocX":121.398852,"LocY":31.111445},{"LocX":121.456869,"LocY":31.0265}],[{"LocX":121.398921,"LocY":31.106097},{"LocX":121.401809,"LocY":31.100201},{"LocX":121.456869,"LocY":31.0265}],[{"LocX":121.401809,"LocY":31.100201},{"LocX":121.409845,"LocY":31.07968},{"LocX":121.407967,"LocY":31.073101},{"LocX":121.456869,"LocY":31.0265}]]';
+                var myObject = eval('(' + responseText + ')');
+                firstRoute = myObject[0];
+                middlePoint = firstRoute[0];
+                finalPoint = firstRoute[firstRoute.length-1];
+
+                var microsoftlng = finalPoint.LocX;
+                var microsoftlat = finalPoint.LocY;
+                var p1 = new BMap.Point(middlePoint.LocX, middlePoint.LocY);
+                var p2 = new BMap.Point(microsoftlng, microsoftlat);
+                var middleWayPoints = new Array();
+                if (firstRoute.length > 2) {
+                    for (var i = 1; i < firstRoute.length - 1; i++)
+                        middleWayPoints[i - 1] = new BMap.Point(firstRoute[i].LocX, firstRoute[i].LocY);
+                }
+
+                //var p3 = new BMap.Point(121.476788, 31.03754);
+
+                var driving = new BMap.DrivingRoute(map, { renderOptions: { map: map, autoViewport: true } });
+                driving.search(p1, p2, { waypoints: middleWayPoints });//waypoints表示途经点
+
+                getPublicRoute(lng, lat, address, middlePoint);
+            }
+        });
+    }
+
+    function getPublicRoute(lng, lat, address, middlePoint)
+    {
         var transit = new BMap.TransitRoute(map, {
             renderOptions: { map: map, panel: "route_result" }
         });
@@ -305,7 +341,8 @@
         $("#newSiteDiv").css("display", "none");
         $("#sourceInput").val(address);
         $("#destinationInput").val("微软上海分公司");
-        transit.search(new BMap.Point(lng, lat), "微软上海分公司");
+
+        transit.search(new BMap.Point(lng, lat), new BMap.Point(middlePoint.LocX, middlePoint.LocY));
     }
 
     function fromMicrosoftToHere(lng, lat, address) {

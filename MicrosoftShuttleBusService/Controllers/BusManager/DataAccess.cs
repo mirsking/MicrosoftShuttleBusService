@@ -13,7 +13,6 @@ namespace BusManager
 {
     class DataAccess
     {
-        
         static string path = HomeController.HomeDirectory + "Controllers\\BusManager\\shuttle.txt";
         static string StationFile = HomeController.HomeDirectory + "Controllers\\BusManager\\AllStations";
         static string RouteFile = HomeController.HomeDirectory +　"Controllers\\BusManager\\AllRoutes";

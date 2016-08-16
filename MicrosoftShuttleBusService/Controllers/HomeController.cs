@@ -65,12 +65,14 @@ namespace MicrosoftShuttleBusService.Controllers
         }
 
 
-        public string BestStationsInJson(FormCollection collection)
+        public String BestStationsInJson(FormCollection collection)
         {
             if (string.IsNullOrEmpty(HomeDirectory))
                 HomeDirectory = Server.MapPath("~/");
-            double x = 0;
-            double y = 0;
+            double x = Convert.ToDouble(collection["lng"]);
+            double y = Convert.ToDouble(collection["lat"]);
+            //double x = 0;
+            //double y = 0;
             Point l = new Point(x, y);
             var allStations = DataAccess.ReadAllStations();
             Station MicroSoft = allStations[4];
