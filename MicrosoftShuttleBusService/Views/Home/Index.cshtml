@@ -209,6 +209,29 @@
             AddSiteFlag = 1;
             localSearch2();
         });
+
+        // get all station
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open('GET', '/Home/AllStationsInJson', true);
+        xmlhttp.onreadystatechange = function () {
+            if (XMLHttpRequest.DONE != xmlhttp.readyState) {
+                return;
+            }
+            if (200 != xmlhttp.status) {
+                return;
+            }
+            var data = new Array();
+            var myObject = eval('(' + xmlhttp.responseText + ')');
+            for (i = 0; i < myObject.length; i++) {
+                arriveTime = "";
+                for (j = 0; j < myObject[i].ToCompTime.length; j++) {
+                    arriveTime += parseInt(myObject[i].ToCompTime[j] / 60) + ":" + myObject[i].ToCompTime[j] % 60 + "  ";
+                }
+                data[i] = new Station(myObject[i].Name, myObject[i].ToCompPic, "Route " + myObject[i].Route, arriveTime, myObject[i].LocX, myObject[i].LocY);
+            }
+            addMarkersInBaiduMap(data, map);
+        };
+        xmlhttp.send();
     });
 </script>
 
@@ -223,10 +246,12 @@
     }
 
     var markersForStation = new Array();
+    var map = createMap("main_map", 121.4511167, 31);
+    /*
     var datas = new Array();
     datas[0] = (new Station("虹桥路宜山路", "http://static.shenjianshou.cn/images/11666-daabbc70ddb73cf96afab7721c97edf0", "Route 11", "11:00am", 121.3511167, 31));
     datas[1] = (new Station("张江路建中路", "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQdSYfLw8bJOpPSVOfhBLTSwF04xrCX_rlfUO8SXS_5OyrkaUZV", "Route 8", "8:00am", 121.4511167, 31));
-
+    */
     // create a baidu map
     // The divID is the ID of the div which gonna show the map
     function createMap(divID, longitude, latitude) {
@@ -236,8 +261,7 @@
         return map;
     }
 
-    var map = createMap("main_map", 121.4511167, 31);
-    addMarkersInBaiduMap(datas, map);
+    
     // datas contain all the info for each station
     function addMarkersInBaiduMap(datas, map) {
         for (i = 0; i < datas.length; i++) {

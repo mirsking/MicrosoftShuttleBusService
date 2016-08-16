@@ -12,9 +12,10 @@ namespace BusManager
 {
     class DataAccess
     {
-        static string path = "C:\\t-zel\\younghackathon\\BusManager\\BusManager\\shuttle.txt";
-        static string StationFile = "C:\\t-zel\\younghackathon\\BusManager\\BusManager\\AllStations";
-        static string RouteFile = "C:\\t-zel\\younghackathon\\BusManager\\BusManager\\AllRoutes";
+        static string HomeDirectory = @"C:\Users\t-qiche\Documents\Visual Studio 2015\Projects\MicrosoftShuttleBusService\MicrosoftShuttleBusService\";
+        static string path = HomeDirectory + "Controllers\\BusManager\\shuttle.txt";
+        static string StationFile = HomeDirectory + "Controllers\\BusManager\\AllStations";
+        static string RouteFile = HomeDirectory +　"Controllers\\BusManager\\AllRoutes";
 
         public static List<Station> Read()
         {
