@@ -23,7 +23,7 @@ namespace BaiduMapSdk.Direction
             }
             else
             {
-                throw new NotSupportedException();
+                throw new NotSupportedException(JsonConvert.SerializeObject(jObject));
             }
         }
 
@@ -31,8 +31,8 @@ namespace BaiduMapSdk.Direction
         {
             Dictionary<string, string> values = new Dictionary<string, string>();
             values.Add("ak",ak);
-            values.Add("origin", origin.Longitude.ToString() + "," + origin.Latitude.ToString());
-            values.Add("destination", destination.Longitude.ToString() + "," + destination.Latitude.ToString());
+            values.Add("origin", origin.Latitude.ToString() + "," + origin.Longitude.ToString());
+            values.Add("destination", destination.Latitude.ToString() + "," + destination.Longitude.ToString());
             values.Add("mode", "transit");
             values.Add("region", "上海");
             values.Add("output", "json");
