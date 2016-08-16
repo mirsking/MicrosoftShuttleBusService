@@ -612,16 +612,47 @@
         map.addOverlay(gpsMarker);
     }
 
+
+    function sleep(numberMillis) {
+        var now = new Date();
+        var exitTime = now.getTime() + numberMillis;
+        while (true) {
+            now = new Date();
+            if (now.getTime() > exitTime)
+                return;
+        }
+    }
+
+    function readGpsCsv() {
+        var lines = [];
+        var routesXmlHttp = new XMLHttpRequest();
+        routesXmlHttp.open('GET', '/gps.csv', true);
+        routesXmlHttp.onreadystatechange = function () {
+            if (XMLHttpRequest.DONE != routesXmlHttp.readyState) {
+                return;
+            }
+            if (200 != routesXmlHttp.status) {
+                return;
+            }
+            var allText = routesXmlHttp.responseText;
+            var allTextLines = allText.split(/\r\n|\n/);
+
+            for (var i=0; i<allTextLines.length; i++) {
+                var data = allTextLines[i].split(',');
+                lines.push(data);
+            }
+        };
+        routesXmlHttp.send();
+        return lines;
+    }
+
     function showGPS(routeId) {
 
-        var points = new Array();
-        points[0] = { lng: 121.450358, lat: 31.1021985, datetime: "10:16:34" };
-        points[1] = { lng: 121.4503462, lat: 31.102254, datetime: "10:16:36" };
-        points[2] = { lng: 121.4503047, lat: 31.10233617, datetime: "10:16:37" };
+        var data = readGpsCsv();
 
-
-        for (var i=0; i<points.length; i++) {
-            addGpsMarker(new BMap.Point(points[i].lng, points[0].lat));
+        for (var i = 0; i < data.length; i++) {
+            addGpsMarker(new BMap.Point(data[i][0], data[i][1]));
+            //sleep(2000);
         }
     }
     //================show GPS end===================//
