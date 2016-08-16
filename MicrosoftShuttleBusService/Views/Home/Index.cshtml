@@ -227,7 +227,7 @@
                 for (j = 0; j < myObject[i].ToCompTime.length; j++) {
                     arriveTime += parseInt(myObject[i].ToCompTime[j] / 60) + ":" + myObject[i].ToCompTime[j] % 60 + "  ";
                 }
-                datas[i] = new Station(myObject[i].Name, myObject[i].ToCompPic, "Route " + myObject[i].Route, arriveTime, myObject[i].LocX, myObject[i].LocY);
+                datas[i] = new Station(myObject[i].Name, "http://7xnluw.com1.z0.glb.clouddn.com/MSShuttleBus/" + myObject[i].ToCompPic.substr(0, myObject[i].ToCompPic.indexOf('.')) + ".png", "Route " + myObject[i].Route, arriveTime, myObject[i].LocX, myObject[i].LocY);
             }
             addMarkersInBaiduMap(datas, map);
         };
