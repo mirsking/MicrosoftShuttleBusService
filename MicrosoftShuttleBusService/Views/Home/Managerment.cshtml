@@ -1,0 +1,598 @@
+﻿
+@{
+    ViewBag.Title = "Managerment";
+}
+@{
+    ViewBag.Title = "Home Page";
+}
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=AxXlQ1BehjgOnV5GflqAjrs46iawMsUE"></script>
+<script src="http://d1.lashouimg.com/static/js/release/jquery-1.4.2.min.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery.form.js" type="text/javascript"></script>
+
+<div class="main map" style="width:100%;height:100%">
+    @*<p>显示地图</p>*@
+    <div style="width:100%;height:100%;border:1px solid gray" id="main_map"></div>
+</div>
+
+<div class="container main">
+    <div class="row">
+        <div class="col-md-3">
+            <div id="searchDiv" class="col-md-12">
+                <div class="input-group">
+                    <input id="searchForInput" type="text" class="form-control" placeholder="搜索地点">
+                    <span class="input-group-btn">
+                        <button id="searchButton" class="btn btn-default" type="button">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                        </button><!-- /searchButton -->
+                    </span>
+                </div><!-- /input-group -->
+                <div id="search_result">
+                </div><!-- /routeInfoDiv -->
+            </div><!-- /searchDiv -->
+
+            <div id="routeDetailDiv" class="col-md-10" style="display:none">
+                <div class="col-md-offset-11">
+                    <span class="input-group-btn">
+                        <button id="returnFromRouteDetailButton" class="btn btn-default" type="button">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span><!-- return -->
+                        </button>
+                    </span>
+                </div><!-- /returnDiv -->
+                <form id="searchRouteForm" action="/Home/BestStationsInJson" method="post" target="_blank">
+                    <input id="lat" name="lat" type="hidden" class="form-control" aria-describedby="basic-addon1">
+                    <input id="lng" name="lng" type="hidden" class="form-control" aria-describedby="basic-addon1">
+                    <div class="input-group">
+                        <input id="sourceInput" name="sourceInput" type="text" class="form-control" placeholder="起点" aria-describedby="basic-addon1">
+                        <span class="input-group-btn">
+                            <span class="glyphicon glyphicon-sort" aria-hidden="true">
+                                <button id="exchangeButton" class="btn btn-default" type="button">
+                                    <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                                </button>
+                            </span>
+                        </span>
+                    </div><!-- /sourceDiv -->
+                    <div class="input-group">
+                        <input id="destinationInput" name="destinationInput" type="text" class="form-control" placeholder="终点" aria-describedby="basic-addon1" readonly="readonly">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" onclick="search()">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button>
+                        </span>
+                    </div><!-- /destinationDiv -->
+                    @*<div class="row">*@
+                    <div id="route_result">
+                    </div><!-- /route_result -->
+                    <div id="shuttle_bus_result">
+                    </div><!-- /shuttle_bus_result -->
+                    @*</div>*@
+                </form>
+            </div><!-- /routeDeatailDiv -->
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var flag = true;
+        $("#destinationInput").val("微软上海分公司");
+
+        $("#detailRouteButton").click(function () {
+            $("#searchDiv").css("display", "none");
+            $("#routeDetailDiv").css("display", "");
+            $("#newSiteDiv").css("display", "none");
+            $("#sourceInput").val($("#searchForInput").val());
+        });
+
+        $("#searchButton").click(function () {
+            //$("#searchDiv").css("display", "none");
+            //$("#routeDetailDiv").css("display", "");
+            //$("#sourceInput").val($("#searchForInput").val());
+            localSearch();
+        });
+
+        $("#searchPositionButton").click(function () {
+            position = $('#positionInput').val();
+            position = position.replace(/(^\s*)|(\s*$)/g, "");
+            if (position == null || position == "") {
+                alert("位置 不能为空");
+                return;
+            }
+            AddSiteFlag = 0;
+            localSearch2();
+        });
+
+        $("#newSiteViewButton").click(function () {
+            $("#searchDiv").css("display", "none");
+            $("#routeDetailDiv").css("display", "none");
+            $("#newSiteDiv").css("display", "");
+        });
+
+        //==========view Gps begin===============//
+        $("#viewGpsButton").click(function() {
+            $("#searchDiv").css("display", "none");
+            $("#routeDetailDiv").css("display", "none");
+            $("#viewGpsDiv").css("display", "");
+        });
+
+        $("#returnFromGpsViewerButton").click(function () {
+            $("#searchDiv").css("display", "");
+            $("#viewGpsDiv").css("display", "none");
+        });
+
+        //show gps info
+        $("#viewRouteGpsButton")
+            .click(function() {
+                var route = $("#routeSelector").val();
+                showGPS(route);
+            });
+
+        //==========view Gps end===============//
+
+        $("#returnFromRouteDetailButton").click(function () {
+            $("#searchDiv").css("display", "");
+            $("#routeDetailDiv").css("display", "none");
+            $("#newSiteDiv").css("display", "none");
+        });
+
+        $("#returnFromNewSiteButton").click(function () {
+            $("#searchDiv").css("display", "");
+            $("#routeDetailDiv").css("display", "none");
+            $("#newSiteDiv").css("display", "none");
+        });
+
+        $("#exchangeButton").click(function () {
+            var temp = $("#sourceInput").val();
+            $("#sourceInput").val($("#destinationInput").val());
+            $("#destinationInput").val(temp);
+            flag = !flag;
+            if (flag)
+            {
+                $("#sourceInput").removeAttr("readonly");
+                $("#destinationInput").attr("readonly", "readonly");
+            }
+            else
+            {
+                $("#sourceInput").attr("readonly", "readonly");
+                $("#destinationInput").removeAttr("readonly");
+            }
+        });
+
+        $("#newSiteButtonHide").click(function () {
+
+            $('#addSiteForm').ajaxSubmit({
+                success: function (responseText) {
+                    var datasForSite = new Array();
+                    var myObject = eval('(' + responseText + ')');
+                    for (i = 0; i < myObject.length; i++) {
+                        datasForSite[i] = (new FTESite(myObject[i].Alias, myObject[i].Phone, myObject[i].Position, myObject[i].lng, myObject[i].lat));
+                    }
+                    addSitesInBaiduMap(datasForSite, map);
+                }
+            });
+        });
+
+        $("#newSiteButtonHide").click();
+
+        $("#newSiteButton").click(function () {
+            alias = $('#aliasInput').val();
+            alias = alias.replace(/(^\s*)|(\s*$)/g, "");
+            if (alias == null || alias == "") {
+                alert("Alias 不能为空");
+                return;
+            }
+            phone = $('#phoneInput').val();
+            phone = phone.replace(/(^\s*)|(\s*$)/g, "");
+            if (phone == null || phone == "") {
+                alert("Phone 不能为空");
+                return;
+            }
+            position = $('#positionInput').val();
+            position = position.replace(/(^\s*)|(\s*$)/g, "");
+            if (position == null || position == "") {
+                alert("位置 不能为空");
+                return;
+            }
+            AddSiteFlag = 1;
+            localSearch2();
+        });
+
+        // get all station
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open('GET', '/Home/AllStationsInJson', true);
+        xmlhttp.onreadystatechange = function () {
+            if (XMLHttpRequest.DONE != xmlhttp.readyState) {
+                return;
+            }
+            if (200 != xmlhttp.status) {
+                return;
+            }
+            datas = new Array();
+            var myObject = eval('(' + xmlhttp.responseText + ')');
+            for (i = 0; i < myObject.length; i++) {
+                arriveTime = "";
+                for (j = 0; j < myObject[i].ToCompTime.length; j++) {
+                    arriveTime += parseInt(myObject[i].ToCompTime[j] / 60) + ":" + myObject[i].ToCompTime[j] % 60 + "  ";
+                }
+                datas[i] = new Station(myObject[i].Name, "http://7xnluw.com1.z0.glb.clouddn.com/MSShuttleBus/" + myObject[i].ToCompPic.substr(0, myObject[i].ToCompPic.indexOf('.')) + ".png", "Route " + myObject[i].Route, arriveTime, myObject[i].LocX, myObject[i].LocY);
+            }
+            addMarkersInBaiduMap(datas, map);
+        };
+        xmlhttp.send();
+
+    });
+</script>
+
+<script type="text/javascript">
+    function Station(name, photo, route, routeTime, longitude, latitude) {
+        this.name = name;
+        this.photo = photo;
+        this.route = route;
+        this.routeTime = routeTime;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
+    var markersForStation = new Array();
+    var map = createMap("main_map", 121.4511167, 31);
+    var datas = new Array();
+    /*
+    var datas = new Array();
+    datas[0] = (new Station("虹桥路宜山路", "http://static.shenjianshou.cn/images/11666-daabbc70ddb73cf96afab7721c97edf0", "Route 11", "11:00am", 121.3511167, 31));
+    datas[1] = (new Station("张江路建中路", "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQdSYfLw8bJOpPSVOfhBLTSwF04xrCX_rlfUO8SXS_5OyrkaUZV", "Route 8", "8:00am", 121.4511167, 31));
+    */
+    // create a baidu map
+    // The divID is the ID of the div which gonna show the map
+    function createMap(divID, longitude, latitude) {
+        map = new BMap.Map(divID);
+        map.centerAndZoom(new BMap.Point(longitude, latitude), 13);
+        map.enableScrollWheelZoom();
+        return map;
+    }
+
+
+
+    // datas contain all the info for each station
+    function addMarkersInBaiduMap(datas, map) {
+        for (i = 0; i < datas.length; i++) {
+            markersForStation.push(new BMap.Marker(new BMap.Point(datas[i].longitude, datas[i].latitude)));
+            map.addOverlay(markersForStation[i]);
+            markersForStation[i].licontent = "<div style=\"width:500px;height:200px;\"><div style=\"float:left\"><img src=\"" + datas[i].photo +
+                            "\" style=\"width:300px;height:200px;\"></div><div style=\"float:right;width:180px;height:200px;\">" + 
+                            "<form id=\"searchRouteForm\" action=\"/Home/BestStationsInJson\" method=\"post\" target=\"_blank\"><span><strong>班车站点:</strong>" +
+                            "<input id=\"name\" name=\"name\" class=\"form-control\" aria-describedby=\"basic-addon1\" value=\"" + datas[i].name + "\">" +
+                            "<input id=\"lng\" name=\"lng\" type=\"hidden\" class=\"form-control\" aria-describedby=\"basic-addon1\" value=\"" + datas[i].longitude + "\">" +
+                            "<input id=\"lat\" name=\"lat\" type=\"hidden\" class=\"form-control\" aria-describedby=\"basic-addon1\" value=\"" + datas[i].latitude + "\">" +
+                            "</span>" + "<span><strong>班车路线:</strong>" +
+                            "<input id=\"route\" name=\"route\" class=\"form-control\" aria-describedby=\"basic-addon1\" value=\"" + datas[i].route + "\">" +
+                            "</span>" + "<span><strong>到站时间:</strong>" +
+                            "<input id=\"time\" name=\"time\" class=\"form-control\" aria-describedby=\"basic-addon1\" value=\"" + datas[i].routeTime + "\">" +
+                            "</span>" + "<button id=\"saveButton\" class=\"btn btn-default\" type=\"button\" style=\"margin-left:10px;margin-top:10px\">保存</button>" +
+                            "   <button id=\"saveButton\" class=\"btn btn-default\" type=\"button\" style=\"margin-left:40px;margin-top:10px\">删除</button>" + "</form></div></div>";
+            markersForStation[i].opts1 = { width: 500 };
+            markersForStation[i].infoWindow = new BMap.InfoWindow(markersForStation[i].licontent, markersForStation[i].opts1);
+            markersForStation[i].enableDragging();
+            markersForStation[i].addEventListener('click', function () {
+                this.openInfoWindow(this.infoWindow);
+            });
+        }
+    }
+
+    function deleteMarkersInBaiduMap(map) {
+        for (i = 0; i < markersForStation.length; i++)
+            map.removeOverlay(markersForStation[i]);
+    }
+
+    function createTransit(map) {
+        var transit = new BMap.TransitRoute(map, {
+            renderOptions: { map: map, panel: "route_result" }
+        });
+        return transit;
+    }
+
+    function searchTransit(map, transit, origin, destination) {
+        map.centerAndZoom(new BMap.Point(121.476788, 31.23754), 12);
+        transit.search(origin, destination);
+    }
+
+    function toMicrosoft(lng, lat, address) {
+        $("#lng").val(lng);
+        $("#lat").val(lat);
+        $('#searchRouteForm').ajaxSubmit({
+            success: function (responseText) {
+                //responseText = '[{"RouteNumber":"Route21","Stations":[{"name":"站点1-1","LocX":121.398852,"LocY":31.111445},{"name":"站点1-2","LocX":121.456869,"LocY":31.0265}]},{"RouteNumber":"RT3","Stations":[{"name":"站点2-1","LocX":121.398921,"LocY":31.106097},{"name":"站点2-2","LocX":121.401809,"LocY":31.100201},{"name":"站点2-3","LocX":121.456869,"LocY":31.0265}]},{"RouteNumber":"Route22","Stations":[{"name":"站点3-1","LocX":121.401809,"LocY":31.100201},{"name":"站点3-2","LocX":121.409845,"LocY":31.07968},{"name":"站点3-3","LocX":121.407967,"LocY":31.073101},{"name":"站点3-4","LocX":121.456869,"LocY":31.0265}]}]';
+                var myObject = eval('(' + responseText + ')');
+                var firstRoute = myObject[0];
+                var routeNumber = firstRoute.RouteNumber;
+                var firstRouteDetail = firstRoute.Stations;
+                var shuttleBusResult = '<h1 style="font:bold 16px arial,sans-serif">而后转乘' + routeNumber + '到达微软上海分公司</h1>';
+                if (firstRouteDetail.length > 2) {
+                    shuttleBusResult = shuttleBusResult + '<p>途经:</p>';
+                    for (var i = 1; i < firstRouteDetail.length - 1; i++)
+                        shuttleBusResult = shuttleBusResult + '<p>' + firstRouteDetail[i].name + '</p>';
+                }
+                $("#shuttle_bus_result").html(shuttleBusResult);
+                var middlePoint = firstRouteDetail[0];
+                var finalPoint = firstRouteDetail[firstRouteDetail.length - 1];
+
+                var microsoftlng = finalPoint.LocX;
+                var microsoftlat = finalPoint.LocY;
+                var p1 = new BMap.Point(middlePoint.LocX, middlePoint.LocY);
+                var p2 = new BMap.Point(microsoftlng, microsoftlat);
+                var middleWayPoints = new Array();
+                if (firstRouteDetail.length > 2) {
+                    for (var i = 1; i < firstRouteDetail.length - 1; i++)
+                        middleWayPoints[i - 1] = new BMap.Point(firstRouteDetail[i].LocX, firstRouteDetail[i].LocY);
+                }
+
+                //var p3 = new BMap.Point(121.476788, 31.03754);
+
+                var driving = new BMap.DrivingRoute(map, { renderOptions: { map: map, autoViewport: true } });
+                driving.search(p1, p2, { waypoints: middleWayPoints });//waypoints表示途经点
+
+                getPublicRoute(lng, lat, address, middlePoint);
+            }
+        });
+    }
+
+    function getPublicRoute(lng, lat, address, middlePoint)
+    {
+        var transit = new BMap.TransitRoute(map, {
+            renderOptions: { map: map, panel: "route_result" },
+            onResultsHtmlSet: function (container) {
+                //alert(container);
+                routeInfo = container.children[1].children[0];
+                if (routeInfo.childElementCount>3)
+                {
+                    for (i = routeInfo.childElementCount-1; i >=3; i--)
+                        routeInfo.children[i].remove();
+                }
+                //addressMakers = container.firstChild.firstChild.childNodes;
+                //for (i = 0; i < addressMakers.length; i++) {
+                //    var btn = document.createElement('button');
+                //    btn.setAttribute("onclick", functionName + "(this)");
+                //    btn.setAttribute("class", "setBtn");
+                //    btn.setAttribute("style", "font-weight: bold; background-position: -21px -81px;");
+                //    btn.innerHTML = "选择";
+                //    btn.setAttribute("id", i);
+                //    addressMakers[i].childNodes[1].appendChild(btn);
+                //    container.childNodes[0].childNodes[0].childNodes[i].setAttribute("onmouseover", "this.click()")
+                //}
+                //container.removeChild(container.childNodes[1]);
+            }
+        });
+        $("#searchDiv").css("display", "none");
+        $("#routeDetailDiv").css("display", "");
+        $("#newSiteDiv").css("display", "none");
+        $("#sourceInput").val(address);
+        $("#destinationInput").val("微软上海分公司");
+
+        transit.search(new BMap.Point(lng, lat), new BMap.Point(middlePoint.LocX, middlePoint.LocY));
+    }
+
+    function fromMicrosoftToHere(lng, lat, address) {
+        var transit = new BMap.TransitRoute(map, {
+            renderOptions: { map: map, panel: "route_result" }
+        });
+        $("#searchDiv").css("display", "none");
+        $("#routeDetailDiv").css("display", "");
+        $("#newSiteDiv").css("display", "none");
+        $("#sourceInput").val("微软上海分公司");
+        $("#destinationInput").val(address);
+        transit.search("微软上海分公司", new BMap.Point(lng, lat));
+    }
+
+
+
+    function search() {
+        var transit = createTransit(map);
+        searchTransit(map, transit, $("#sourceInput").val(), $("#destinationInput").val());
+    }
+
+    function locateToPlace(item) {
+        map.centerAndZoom(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), 13);
+        $("#search_result").html("");
+        var overlays = map.getOverlays();
+        for (i = 0; i < overlays.length ; i++)
+            map.removeOverlay(overlays[i]);
+        addMarkersInBaiduMap(datas, map);
+        var myIcon = new BMap.Icon("../Content/location.png", new BMap.Size(47, 63));
+        var vectorMarker = new BMap.Marker(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), {icon:myIcon});
+        map.addOverlay(vectorMarker);
+        var tmp_content = item.parentElement.innerHTML;
+        vectorMarker.licontent = tmp_content.substr(0, tmp_content.indexOf("<button")) + "<br /><button id='gotoButton' class='btn btn-default' type='button' onclick='toMicrosoft(" +
+                                searchLocalResults.getPoi(item.id).point.lng + "," + searchLocalResults.getPoi(item.id).point.lat + ",\"" +
+                                searchLocalResults.getPoi(item.id).address + "\")'" +
+                                "><span aria-hidden='true'>从这去公司</span>" +
+                                "</button><button id='gotoButton' class='btn btn-default' type='button' onclick='fromMicrosoftToHere(" +
+                                searchLocalResults.getPoi(item.id).point.lng + "," + searchLocalResults.getPoi(item.id).point.lat + ",\"" +
+                                searchLocalResults.getPoi(item.id).address + "\")'" +
+                                "><span aria-hidden='true'>从公司来这</span>" +
+                                "</button>";
+        vectorMarker.opts1 = { width: 100 };
+        vectorMarker.infoWindow = new BMap.InfoWindow(vectorMarker.licontent, vectorMarker.opts1);
+        vectorMarker.openInfoWindow(vectorMarker.infoWindow);
+        vectorMarker.addEventListener('click', function () {
+            this.openInfoWindow(this.infoWindow);
+        });
+    }
+
+    var AddSiteFlag = 0;
+    function locateToPlace2(item) {
+        map.centerAndZoom(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), 13);
+        $("#search_position_result").html("");
+        var overlays = map.getOverlays();
+        for (i = 0; i < overlays.length ; i++)
+            map.removeOverlay(overlays[i]);
+
+        var myIcon = new BMap.Icon("../Content/location.png", new BMap.Size(47, 63));
+        var vectorMarker = new BMap.Marker(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), { icon: myIcon });
+        map.addOverlay(vectorMarker);
+        var tmp_content = item.parentElement.innerHTML;
+        vectorMarker.licontent = tmp_content.substr(0, tmp_content.indexOf("<button")) + "<br /><button id='gotoButton' class='btn btn-default' type='button' onclick='toMicrosoft(" +
+                                searchLocalResults.getPoi(item.id).point.lng + "," + searchLocalResults.getPoi(item.id).point.lat + ",\"" +
+                                searchLocalResults.getPoi(item.id).address + "\")'" +
+                                "><span aria-hidden='true'>从这去公司</span>" +
+                                "</button><button id='gotoButton' class='btn btn-default' type='button' onclick='fromMicrosoftToHere(" +
+                                searchLocalResults.getPoi(item.id).point.lng + "," + searchLocalResults.getPoi(item.id).point.lat + ",\"" +
+                                searchLocalResults.getPoi(item.id).address + "\")'" +
+                                "><span aria-hidden='true'>从公司来这</span>" +
+                                "</button>";
+        vectorMarker.opts1 = { width: 100 };
+        vectorMarker.infoWindow = new BMap.InfoWindow(vectorMarker.licontent, vectorMarker.opts1);
+        vectorMarker.openInfoWindow(vectorMarker.infoWindow);
+        vectorMarker.addEventListener('click', function () {
+            this.openInfoWindow(this.infoWindow);
+        });
+        $("#lngInput").val(searchLocalResults.getPoi(item.id).point.lng);
+        $("#latInput").val(searchLocalResults.getPoi(item.id).point.lat);
+    //    if (AddSiteFlag == 1) {
+    //        AddSiteFlag = 0;
+        $("#newSiteButtonHide").click();
+    //    }
+    }
+
+    var searchLocalResults;
+    function createLocalSearch(map, resultDivID, functionName) {
+        /// It's the same usage as the transit search, you can add a callback here or use getResults() after search.
+        /// The return type of getResults is LocalResult or array of LocalResult.
+        /// links: 1) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/LocalSearch
+        ///        2) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/LocalResult
+
+        var options = {
+            onSearchComplete: function (results) {
+                if (local.getStatus() == BMAP_STATUS_SUCCESS) {
+                    // 判断状态是否正确
+                    var s = [];
+                    searchLocalResults = results;
+                    for (var i = 0; i < results.getCurrentNumPois() ; i++) {
+                        s.push(results.getPoi(i).title + ", " + results.getPoi(i).point.lng + ", " + results.getPoi(i).point.lat);
+                    }
+                //    document.getElementById("route_result").innerHTML = s.join("<br>");
+                }
+            },
+            renderOptions: { map: map, autoViewport: true, panel: resultDivID },
+
+            onResultsHtmlSet: function (container)
+            {
+                addressMakers = container.firstChild.firstChild.childNodes;
+                for (i = 0; i < addressMakers.length; i++) {
+                    var btn = document.createElement('button');
+                    btn.setAttribute("onclick", functionName + "(this)");
+                    btn.setAttribute("class", "setBtn");
+                    btn.setAttribute("style", "font-weight: bold; background-position: -21px -81px;");
+                    btn.innerHTML = "选择";
+                    btn.setAttribute("id", i);
+                    addressMakers[i].childNodes[1].appendChild(btn);
+                    container.childNodes[0].childNodes[0].childNodes[i].setAttribute("onmouseover", "this.click()")
+                }
+                container.removeChild(container.childNodes[1]);
+            }
+        };
+        var local = new BMap.LocalSearch(map, options);
+        return local;
+    }
+
+    function localSearch() {
+        var local_search = createLocalSearch(map, "search_result", "locateToPlace");
+        local_search.search($("#searchForInput").val());
+    }
+
+    function localSearch2() {
+        var local_search = createLocalSearch(map, "search_position_result", "locateToPlace2");
+        local_search.search($("#positionInput").val());
+    }
+
+
+    function FTESite(alias, phone, address, longitude, latitude) {
+        this.alias = alias;
+        this.phone = phone;
+        this.address = address;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+    var markersForSites = new Array();
+    function addSitesInBaiduMap(datas, map) {
+        markersForSites = [];
+        for (i = 0; i < datas.length; i++) {
+            markersForSites.push(new BMap.Marker(new BMap.Point(datas[i].longitude, datas[i].latitude)));
+            map.addOverlay(markersForSites[i]);
+            markersForSites[i].licontent = "<div style=\"width:200px;height:200px;\"><div style=\"float:left\"></div><div style=\"float:right;width:180px;height:200px;\"><h3>" +
+                            datas[i].alias + "</h3><span><strong>Phone:</strong> " + datas[i].phone + "</span> <br /><span><strong>address:</strong> " + datas[i].address + "</span></div></div>";
+            markersForSites[i].opts1 = { width: 200 };
+            markersForSites[i].infoWindow = new BMap.InfoWindow(markersForSites[i].licontent, markersForSites[i].opts1);
+            markersForSites[i].addEventListener('click', function () {
+                this.openInfoWindow(this.infoWindow);
+            });
+        }
+    }
+    function deleteMarkersInBaiduMapForSites(map) {
+        for (i = 0; i < markersForSites.length; i++)
+            map.removeOverlay(markersForSites[i]);
+    }
+
+
+    //================show GPS begin===================//
+    function addRoutesIntoRouteSelector(routeNames, routeIds) {
+        for (var i=0; i< routeNames.length; i++) {
+            var opt = document.createElement('option');
+            opt.value = routeIds[i];
+            opt.innerHTML = routeNames[i];
+            var selector = document.getElementById("routeSelector");
+            selector.appendChild(opt);
+        }
+    }
+
+    function addGpsMarker(point, data) {
+        var customIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300, 157));
+        var gpsMarker = new BMap.Marker(point, { icon: customIcon});
+        map.addOverlay(gpsMarker);
+    }
+
+
+    function sleep(numberMillis) {
+        var now = new Date();
+        var exitTime = now.getTime() + numberMillis;
+        while (true) {
+            now = new Date();
+            if (now.getTime() > exitTime)
+                return;
+        }
+    }
+
+    function readGpsCsv() {
+        var lines = [];
+        var routesXmlHttp = new XMLHttpRequest();
+        routesXmlHttp.open('GET', '/gps.csv', true);
+        routesXmlHttp.onreadystatechange = function () {
+            if (XMLHttpRequest.DONE != routesXmlHttp.readyState) {
+                return;
+            }
+            if (200 != routesXmlHttp.status) {
+                return;
+            }
+            var allText = routesXmlHttp.responseText;
+            var allTextLines = allText.split(/\r\n|\n/);
+
+            for (var i=0; i<allTextLines.length; i++) {
+                var data = allTextLines[i].split(',');
+                lines.push(data);
+            }
+        };
+        routesXmlHttp.send();
+        return lines;
+    }
+
+    function showGPS(routeId) {
+
+        var data = readGpsCsv();
+
+        for (var i = 0; i < data.length; i++) {
+            addGpsMarker(new BMap.Point(data[i][0], data[i][1]));
+            //sleep(2000);
+        }
+    }
+    //================show GPS end===================//
+
+
+</script>

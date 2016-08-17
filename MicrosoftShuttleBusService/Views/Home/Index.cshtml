@@ -299,7 +299,7 @@
                 }
                 datas[i] = new Station(myObject[i].Name, "http://7xnluw.com1.z0.glb.clouddn.com/MSShuttleBus/" + myObject[i].ToCompPic.substr(0, myObject[i].ToCompPic.indexOf('.')) + ".png", "Route " + myObject[i].Route, arriveTime, myObject[i].LocX, myObject[i].LocY);
             }
-            //addMarkersInBaiduMap(datas, map);
+            addMarkersInBaiduMap(datas, map);
         };
         xmlhttp.send();
 
@@ -491,7 +491,7 @@
         for (i = 0; i < overlays.length ; i++)
             map.removeOverlay(overlays[i]);
         addMarkersInBaiduMap(datas, map);
-        var myIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300, 157));
+        var myIcon = new BMap.Icon("../Content/location.png", new BMap.Size(47, 63));
         var vectorMarker = new BMap.Marker(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), {icon:myIcon});
         map.addOverlay(vectorMarker);
         var tmp_content = item.parentElement.innerHTML;
@@ -520,7 +520,7 @@
         for (i = 0; i < overlays.length ; i++)
             map.removeOverlay(overlays[i]);
 
-        var myIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300, 157));
+        var myIcon = new BMap.Icon("../Content/location.png", new BMap.Size(47, 63));
         var vectorMarker = new BMap.Marker(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), { icon: myIcon });
         map.addOverlay(vectorMarker);
         var tmp_content = item.parentElement.innerHTML;
