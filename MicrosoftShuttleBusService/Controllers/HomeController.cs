@@ -11,8 +11,11 @@ namespace MicrosoftShuttleBusService.Controllers
 {
     public class HomeController : Controller
     {
+        public static string HomeDirectory = "";
+
         public ActionResult Index()
         {
+
             return View();
         }
 
@@ -56,14 +59,29 @@ namespace MicrosoftShuttleBusService.Controllers
 
         public string AllStationsInJson()
         {
+
+            if (string.IsNullOrEmpty(HomeDirectory))
+                HomeDirectory = Server.MapPath("~/");
             return BusUtil.AllStationsToJson();
         }
 
-
-        public string BestStationsInJson(FormCollection collection)
+        public string AllRoutesInJson()
         {
-            double x = 0;
-            double y = 0;
+            if (string.IsNullOrEmpty(HomeDirectory))
+            {
+                HomeDirectory = Server.MapPath("~/");
+            }
+            return BusUtil.AllRoutesToJson();
+        }
+
+        public String BestStationsInJson(FormCollection collection)
+        {
+            if (string.IsNullOrEmpty(HomeDirectory))
+                HomeDirectory = Server.MapPath("~/");
+            double x = Convert.ToDouble(collection["lng"]);
+            double y = Convert.ToDouble(collection["lat"]);
+            //double x = 0;
+            //double y = 0;
             Point l = new Point(x, y);
             var allStations = DataAccess.ReadAllStations();
             Station MicroSoft = allStations[4];

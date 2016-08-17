@@ -191,7 +191,7 @@ namespace BusManager
             return null;
         }
 
-        public static void AdminEditStation(string name,string route, double newLocationX, double newLocationY)
+        public static void AdminEditStation(string name, string route, double newLocationX, double newLocationY)
         {
             var allStations = DataAccess.ReadAllStations();
             foreach (Station s in allStations)
@@ -205,6 +205,11 @@ namespace BusManager
                     return;
                 }
             }
+        }
+        public static string AllRoutesToJson()
+        {
+            List<Route> allRoutes = DataAccess.ReadAllRoutes();
+            return JsonConvert.SerializeObject(allRoutes);
         }
 
         public static void AddNewPoint(double x, double y)

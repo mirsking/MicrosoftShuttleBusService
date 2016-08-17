@@ -151,15 +151,15 @@
     datas[0] = (new Station("虹桥路宜山路", "http://static.shenjianshou.cn/images/11666-daabbc70ddb73cf96afab7721c97edf0", "Route 11", "11:00am", 121.3511167, 31));
     datas[1] = (new Station("张江路建中路", "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQdSYfLw8bJOpPSVOfhBLTSwF04xrCX_rlfUO8SXS_5OyrkaUZV", "Route 8", "8:00am", 121.4511167, 31));
 	var map = createMap("map", 121.4511167, 31);
-    addMarkersInBaiduMap(datas, map);
-
+    //addMarkersInBaiduMap(datas, map);
+/*
     // route lines array, not used right now
     var polylines = [];
 	var transit = createTransit(map);
-	searchTransit(map, transit, "虹桥火车站", "微软上海");
+	//searchTransit(map, transit, "虹桥火车站", "微软上海");
 
     var local_search = createLocalSearch(map);
-    local_search.search("虹桥火车站");
+    //local_search.search("虹桥火车站");
 
     ///
     var p1 = new BMap.Point(121.476788,31.23754);
@@ -175,6 +175,20 @@
     });
 	
 	map.clearOverlays();
+*/	
+
+	// Add a dragger and drag to a desire point, return the dragend point
+	var markerPoint = new BMap.Point(121.3511167, 31);
+	var markerOptions = {
+		enableDragging:true
+	}
+	var draggableMarker = new BMap.Marker(markerPoint, markerOptions);
+	draggableMarker.addEventListener('dragend', 
+		function(event){
+			alert('dragged to: ' + event.point.lng + ', ' + event.point.lat)
+		});
+		
+	map.addOverlay(draggableMarker);
 
 </script>
 

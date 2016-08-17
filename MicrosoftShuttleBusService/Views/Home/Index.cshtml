@@ -13,41 +13,48 @@
 <div class="container main">
     <div class="row">
         <div class="col-md-3">
-            <div class="row">
-                <div id="searchDiv" class="col-md-12" style="">
-                    <div class="input-group">
-                        <input id="searchForInput" type="text" class="form-control" placeholder="搜索地点">
-                        <span class="input-group-btn">
-                            <button id="searchButton" class="btn btn-default" type="button">
-                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                            </button><!-- /searchButton -->
-                        </span>
-                        <span class="input-group-btn">
-                            <button id="detailRouteButton" class="btn btn-default" type="button">
-                                <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
-                            </button><!-- /detailRouteButton -->
-                        </span>
-                        <span class="input-group-btn">
-                            <button id="newSiteViewButton" class="btn btn-default" type="button">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                            </button>
-                            
-                        </span>
-                    </div><!-- /input-group -->
-                    <div id="search_result">
-                    </div><!-- /routeInfoDiv -->
-                </div><!-- /searchDiv -->
+            <div id="searchDiv" class="col-md-12">
+                <div class="input-group">
+                    <input id="searchForInput" type="text" class="form-control" placeholder="搜索地点">
+                    <span class="input-group-btn">
+                        <button id="searchButton" class="btn btn-default" type="button">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                        </button><!-- /searchButton -->
+                    </span>
+                    @*<span class="input-group-btn">
+                        <button id="detailRouteButton" class="btn btn-default" type="button">
+                            <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
+                        </button>
+                    </span>*@
+                    <span class="input-group-btn">
+                        <button id="newSiteViewButton" class="btn btn-default" type="button">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true">
+                            </span>
+                        </button>
+                    </span>
+                    <span class="input-group-btn">
+                        <button id="viewGpsButton" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+                        </button>
+                    </span>
+                </div><!-- /input-group -->
+                <div id="search_result">
+                </div><!-- /routeInfoDiv -->
+            </div><!-- /searchDiv -->
 
-                <div id="routeDetailDiv" class="col-md-10" style="display:none">
-                    <div class="col-md-offset-11">
-                        <span class="input-group-btn">
-                            <button id="returnFromRouteDetailButton" class="btn btn-default" type="button">
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span><!-- return -->
-                            </button>
-                        </span>
-                    </div><!-- /returnDiv -->
+            <div id="routeDetailDiv" class="col-md-10" style="display:none">
+                <div class="col-md-offset-11">
+                    <span class="input-group-btn">
+                        <button id="returnFromRouteDetailButton" class="btn btn-default" type="button">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span><!-- return -->
+                        </button>
+                    </span>
+                </div><!-- /returnDiv -->
+                <form id="searchRouteForm" action="/Home/BestStationsInJson" method="post" target="_blank">
+                    <input id="lat" name="lat" type="hidden" class="form-control" aria-describedby="basic-addon1">
+                    <input id="lng" name="lng" type="hidden" class="form-control" aria-describedby="basic-addon1">
                     <div class="input-group">
-                        <input id="sourceInput" type="text" class="form-control" placeholder="起点" aria-describedby="basic-addon1">
+                        <input id="sourceInput" name="sourceInput" type="text" class="form-control" placeholder="起点" aria-describedby="basic-addon1">
                         <span class="input-group-btn">
                             <span class="glyphicon glyphicon-sort" aria-hidden="true">
                                 <button id="exchangeButton" class="btn btn-default" type="button">
@@ -57,76 +64,93 @@
                         </span>
                     </div><!-- /sourceDiv -->
                     <div class="input-group">
-                        <input id="destinationInput" type="text" class="form-control" placeholder="终点" aria-describedby="basic-addon1" readonly="readonly">
+                        <input id="destinationInput" name="destinationInput" type="text" class="form-control" placeholder="终点" aria-describedby="basic-addon1" readonly="readonly">
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="button" onclick="search()">
                                 <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                             </button>
                         </span>
                     </div><!-- /destinationDiv -->
+                    @*<div class="row">*@
                     <div id="route_result">
-                    </div><!-- /routeInfoDiv -->
-                </div><!-- /routeDeatailDiv -->
+                    </div><!-- /route_result -->
+                    <div id="shuttle_bus_result">
+                    </div><!-- /shuttle_bus_result -->
+                    @*</div>*@
+                </form>
+            </div><!-- /routeDeatailDiv -->
 
-                <div id="newSiteDiv" class="col-md-10" style="display:none">
-                    <div class="col-md-offset-11">
+            <div id="newSiteDiv" class="col-md-10" style="display:none">
+                <div class="col-md-offset-11">
+                    <span class="input-group-btn">
+                        <button id="returnFromNewSiteButton" class="btn btn-default" type="button">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span><!-- return -->
+                        </button>
+                    </span>
+                </div><!-- /returnDiv -->
+                <form id="addSiteForm" action="/Home/AddSite" method="post" target="_blank" >
+                    <div class="input-group soloInput">
+                        <input id="aliasInput" name="aliasInput" type="text" class="form-control" placeholder="Alias" aria-describedby="basic-addon1">
+                    </div><!-- /aliasDiv -->
+                    <div class="input-group soloInput">
+                        <input id="phoneInput" name="phoneInput" type="text" class="form-control" placeholder="电话" aria-describedby="basic-addon1">
+                    </div><!-- /emailDiv -->
+                    <div class="input-group soloInput">
+                        <input id="lngInput" name="lngInput" type="text" class="form-control" placeholder="lng" aria-describedby="basic-addon1" style="display:none">
+                    </div><!-- /aliasDiv -->
+                    <div class="input-group soloInput">
+                        <input id="latInput" name="latInput" type="text" class="form-control" placeholder="lat" aria-describedby="basic-addon1" style="display:none">
+                    </div><!-- /emailDiv -->
+                    <div class="input-group">
+                        <input id="positionInput" name="positionInput" type="text" class="form-control" placeholder="位置" aria-describedby="basic-addon1">
                         <span class="input-group-btn">
-                            <button id="returnFromNewSiteButton" class="btn btn-default" type="button">
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span><!-- return -->
-                            </button>
+                            <button id="searchPositionButton" class="btn btn-default" type="button" >
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button><!-- /searchPositionButton -->
+
                         </span>
-                    </div><!-- /returnDiv -->
-                    <form id="addSiteForm" action="/Home/AddSite" method="post" target="_blank" >
-                        <div class="input-group soloInput">
-                            <input id="aliasInput" name="aliasInput" type="text" class="form-control" placeholder="Alias" aria-describedby="basic-addon1">
-                        </div><!-- /aliasDiv -->
-                        <div class="input-group soloInput">
-                            <input id="phoneInput" name="phoneInput" type="text" class="form-control" placeholder="电话" aria-describedby="basic-addon1">
-                        </div><!-- /emailDiv -->
-                        <div class="input-group soloInput">
-                            <input id="lngInput" name="lngInput" type="text" class="form-control" placeholder="lng" aria-describedby="basic-addon1" style="display:none">
-                        </div><!-- /aliasDiv -->
-                        <div class="input-group soloInput">
-                            <input id="latInput" name="latInput" type="text" class="form-control" placeholder="lat" aria-describedby="basic-addon1" style="display:none">
-                        </div><!-- /emailDiv -->
-                        <div class="input-group">
-                            <input id="positionInput" name="positionInput" type="text" class="form-control" placeholder="位置" aria-describedby="basic-addon1">
-                            <span class="input-group-btn">
-                                <button id="searchPositionButton" class="btn btn-default" type="button" >
-                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                                </button><!-- /searchPositionButton -->
-                                
-                            </span>
-                            <span class="input-group-btn">
-                                <button id="newSiteButton" class="btn btn-default" type="button">
-                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                </button><!-- /newSiteButton -->
-                                <button id="newSiteButtonHide" class="btn btn-default" type="button" style="display:none">
-                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                </button><!-- /newSiteButtonHide -->
-                            </span>
-                        </div><!-- /positionDiv -->
-                    </form>
-                    <div id="search_position_result">
+                        <span class="input-group-btn">
+                            <button id="newSiteButton" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            </button><!-- /newSiteButton -->
+                            <button id="newSiteButtonHide" class="btn btn-default" type="button" style="display:none">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            </button><!-- /newSiteButtonHide -->
+                        </span>
+                    </div><!-- /positionDiv -->
+                </form>
+                <div id="search_position_result">
+                </div>
+                <div id="person_detail" style="display:none">
+                    <div class="row detail">
+                        </br>
+                        <p>人员信息1</p>
+                        </br>
                     </div>
-                    <div id="person_detail" style="display:none">
-                        <div class="row detail">
-                            </br>
-                            <p>人员信息1</p>
-                            </br>
-                        </div>
-                        <div class="row detail">
-                            </br>
-                            <p>人员信息2</p>
-                            </br>
-                        </div>
-                        <div class="row detail">
-                            </br>
-                            <p>人员信息3</p>
-                            </br>
-                        </div>
-                    </div><!-- /routeInfoDiv -->
-                </div><!-- /newSiteDiv -->
+                    <div class="row detail">
+                        </br>
+                        <p>人员信息2</p>
+                        </br>
+                    </div>
+                    <div class="row detail">
+                        </br>
+                        <p>人员信息3</p>
+                        </br>
+                    </div>
+                </div><!-- /routeInfoDiv -->
+            </div><!-- /newSiteDiv -->
+
+            <div id="viewGpsDiv" class="col-md-10" style="display:none">
+                <select id="routeSelector">
+                </select>
+                <span class="input-group-btn">
+                    <button id="viewRouteGpsButton" class="btn btn-default" type="button">
+                            <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+                    </button>
+                    <button id="returnFromGpsViewerButton" class="btn btn-default" type="button">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span><!-- return -->
+                    </button>
+                </span>
             </div>
         </div>
     </div>
@@ -135,7 +159,7 @@
 <script>
     $(document).ready(function () {
         var flag = true;
-        $("#destinationInput").val("微软");
+        $("#destinationInput").val("微软上海分公司");
 
         $("#detailRouteButton").click(function () {
             $("#searchDiv").css("display", "none");
@@ -152,6 +176,12 @@
         });
 
         $("#searchPositionButton").click(function () {
+            position = $('#positionInput').val();
+            position = position.replace(/(^\s*)|(\s*$)/g, "");
+            if (position == null || position == "") {
+                alert("位置 不能为空");
+                return;
+            }
             AddSiteFlag = 0;
             localSearch2();
         });
@@ -161,6 +191,27 @@
             $("#routeDetailDiv").css("display", "none");
             $("#newSiteDiv").css("display", "");
         });
+
+        //==========view Gps begin===============//
+        $("#viewGpsButton").click(function() {
+            $("#searchDiv").css("display", "none");
+            $("#routeDetailDiv").css("display", "none");
+            $("#viewGpsDiv").css("display", "");
+        });
+
+        $("#returnFromGpsViewerButton").click(function () {
+            $("#searchDiv").css("display", "");
+            $("#viewGpsDiv").css("display", "none");
+        });
+
+        //show gps info
+        $("#viewRouteGpsButton")
+            .click(function() {
+                var route = $("#routeSelector").val();
+                showGPS(route);
+            });
+
+        //==========view Gps end===============//
 
         $("#returnFromRouteDetailButton").click(function () {
             $("#searchDiv").css("display", "");
@@ -190,8 +241,9 @@
                 $("#destinationInput").removeAttr("readonly");
             }
         });
-   
+
         $("#newSiteButtonHide").click(function () {
+            
             $('#addSiteForm').ajaxSubmit({
                 success: function (responseText) {
                     var datasForSite = new Array();
@@ -204,8 +256,26 @@
             });
         });
 
-        
+
         $("#newSiteButton").click(function () {
+            alias = $('#aliasInput').val();
+            alias = alias.replace(/(^\s*)|(\s*$)/g, "");
+            if (alias == null || alias == "") {
+                alert("Alias 不能为空");
+                return;
+            }
+            phone = $('#phoneInput').val();
+            phone = phone.replace(/(^\s*)|(\s*$)/g, "");
+            if (phone == null || phone == "") {
+                alert("Phone 不能为空");
+                return;
+            }
+            position = $('#positionInput').val();
+            position = position.replace(/(^\s*)|(\s*$)/g, "");
+            if (position == null || position == "") {
+                alert("位置 不能为空");
+                return;
+            }
             AddSiteFlag = 1;
             localSearch2();
         });
@@ -229,9 +299,33 @@
                 }
                 datas[i] = new Station(myObject[i].Name, "http://7xnluw.com1.z0.glb.clouddn.com/MSShuttleBus/" + myObject[i].ToCompPic.substr(0, myObject[i].ToCompPic.indexOf('.')) + ".png", "Route " + myObject[i].Route, arriveTime, myObject[i].LocX, myObject[i].LocY);
             }
-            addMarkersInBaiduMap(datas, map);
+            //addMarkersInBaiduMap(datas, map);
         };
         xmlhttp.send();
+
+        // get all routes
+        var routesXmlHttp = new XMLHttpRequest();
+        routesXmlHttp.open('GET', '/Home/AllRoutesInJson', true);
+        routesXmlHttp.onreadystatechange = function () {
+            if (XMLHttpRequest.DONE != routesXmlHttp.readyState) {
+                return;
+            }
+            if (200 != routesXmlHttp.status) {
+                return;
+            }
+            var labels = new Array();
+            var values = new Array();
+            var myObject = eval('(' + routesXmlHttp.responseText + ')');
+            for (i = 0; i < myObject.length; i++) {
+                var station0 = myObject[i].Stations[0];
+                var value = (station0.IsRoute ? "R" : "RT") + station0.Route;
+                var label = value + "\t" + station0.Name;
+                values.push(value);
+                labels.push(label);
+            }
+            addRoutesIntoRouteSelector(labels, values);
+        };
+        routesXmlHttp.send();
     });
 </script>
 
@@ -262,7 +356,7 @@
         return map;
     }
 
-    
+
     // datas contain all the info for each station
     function addMarkersInBaiduMap(datas, map) {
         for (i = 0; i < datas.length; i++) {
@@ -297,15 +391,78 @@
     }
 
     function toMicrosoft(lng, lat, address) {
+        $("#lng").val(lng);
+        $("#lat").val(lat);
+        $('#searchRouteForm').ajaxSubmit({
+            success: function (responseText) {
+                //responseText = '[{"RouteNumber":"Route21","Stations":[{"name":"站点1-1","LocX":121.398852,"LocY":31.111445},{"name":"站点1-2","LocX":121.456869,"LocY":31.0265}]},{"RouteNumber":"RT3","Stations":[{"name":"站点2-1","LocX":121.398921,"LocY":31.106097},{"name":"站点2-2","LocX":121.401809,"LocY":31.100201},{"name":"站点2-3","LocX":121.456869,"LocY":31.0265}]},{"RouteNumber":"Route22","Stations":[{"name":"站点3-1","LocX":121.401809,"LocY":31.100201},{"name":"站点3-2","LocX":121.409845,"LocY":31.07968},{"name":"站点3-3","LocX":121.407967,"LocY":31.073101},{"name":"站点3-4","LocX":121.456869,"LocY":31.0265}]}]';
+                var myObject = eval('(' + responseText + ')');
+                var firstRoute = myObject[0];
+                var routeNumber = firstRoute.RouteNumber;
+                var firstRouteDetail = firstRoute.Stations;
+                var shuttleBusResult = '<h1 style="font:bold 16px arial,sans-serif">而后转乘' + routeNumber + '到达微软上海分公司</h1>';
+                if (firstRouteDetail.length > 2) {
+                    shuttleBusResult = shuttleBusResult + '<p>途经:</p>';
+                    for (var i = 1; i < firstRouteDetail.length - 1; i++)
+                        shuttleBusResult = shuttleBusResult + '<p>' + firstRouteDetail[i].name + '</p>';
+                }
+                $("#shuttle_bus_result").html(shuttleBusResult);
+                var middlePoint = firstRouteDetail[0];
+                var finalPoint = firstRouteDetail[firstRouteDetail.length - 1];
+
+                var microsoftlng = finalPoint.LocX;
+                var microsoftlat = finalPoint.LocY;
+                var p1 = new BMap.Point(middlePoint.LocX, middlePoint.LocY);
+                var p2 = new BMap.Point(microsoftlng, microsoftlat);
+                var middleWayPoints = new Array();
+                if (firstRouteDetail.length > 2) {
+                    for (var i = 1; i < firstRouteDetail.length - 1; i++)
+                        middleWayPoints[i - 1] = new BMap.Point(firstRouteDetail[i].LocX, firstRouteDetail[i].LocY);
+                }
+
+                //var p3 = new BMap.Point(121.476788, 31.03754);
+
+                var driving = new BMap.DrivingRoute(map, { renderOptions: { map: map, autoViewport: true } });
+                driving.search(p1, p2, { waypoints: middleWayPoints });//waypoints表示途经点
+
+                getPublicRoute(lng, lat, address, middlePoint);
+            }
+        });
+    }
+
+    function getPublicRoute(lng, lat, address, middlePoint)
+    {
         var transit = new BMap.TransitRoute(map, {
-            renderOptions: { map: map, panel: "route_result" }
+            renderOptions: { map: map, panel: "route_result" },
+            onResultsHtmlSet: function (container) {
+                //alert(container);
+                routeInfo = container.children[1].children[0];
+                if (routeInfo.childElementCount>3)
+                {
+                    for (i = routeInfo.childElementCount-1; i >=3; i--)
+                        routeInfo.children[i].remove();
+                }
+                //addressMakers = container.firstChild.firstChild.childNodes;
+                //for (i = 0; i < addressMakers.length; i++) {
+                //    var btn = document.createElement('button');
+                //    btn.setAttribute("onclick", functionName + "(this)");
+                //    btn.setAttribute("class", "setBtn");
+                //    btn.setAttribute("style", "font-weight: bold; background-position: -21px -81px;");
+                //    btn.innerHTML = "选择";
+                //    btn.setAttribute("id", i);
+                //    addressMakers[i].childNodes[1].appendChild(btn);
+                //    container.childNodes[0].childNodes[0].childNodes[i].setAttribute("onmouseover", "this.click()")
+                //}
+                //container.removeChild(container.childNodes[1]);
+            }
         });
         $("#searchDiv").css("display", "none");
         $("#routeDetailDiv").css("display", "");
         $("#newSiteDiv").css("display", "none");
         $("#sourceInput").val(address);
         $("#destinationInput").val("微软上海分公司");
-        transit.search(new BMap.Point(lng, lat), "微软上海分公司");
+
+        transit.search(new BMap.Point(lng, lat), new BMap.Point(middlePoint.LocX, middlePoint.LocY));
     }
 
     function fromMicrosoftToHere(lng, lat, address) {
@@ -320,7 +477,7 @@
         transit.search("微软上海分公司", new BMap.Point(lng, lat));
     }
 
-   
+
 
     function search() {
         var transit = createTransit(map);
@@ -362,16 +519,19 @@
         var overlays = map.getOverlays();
         for (i = 0; i < overlays.length ; i++)
             map.removeOverlay(overlays[i]);
-        
+
         var myIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300, 157));
         var vectorMarker = new BMap.Marker(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), { icon: myIcon });
         map.addOverlay(vectorMarker);
         var tmp_content = item.parentElement.innerHTML;
-        
-        vectorMarker.licontent = tmp_content.substr(0, tmp_content.indexOf("<button"))  + "<br /><button id='gotoButton' class='btn btn-default' type='button'>" +
-                                "<span aria-hidden='true'>从这去公司</span>" +
-                                "</button><button id='gotoButton' class='btn btn-default' type='button'>" +
-                                "<span aria-hidden='true'>从公司来这</span>" +
+        vectorMarker.licontent = tmp_content.substr(0, tmp_content.indexOf("<button")) + "<br /><button id='gotoButton' class='btn btn-default' type='button' onclick='toMicrosoft(" +
+                                searchLocalResults.getPoi(item.id).point.lng + "," + searchLocalResults.getPoi(item.id).point.lat + ",\"" +
+                                searchLocalResults.getPoi(item.id).address + "\")'" +
+                                "><span aria-hidden='true'>从这去公司</span>" +
+                                "</button><button id='gotoButton' class='btn btn-default' type='button' onclick='fromMicrosoftToHere(" +
+                                searchLocalResults.getPoi(item.id).point.lng + "," + searchLocalResults.getPoi(item.id).point.lat + ",\"" +
+                                searchLocalResults.getPoi(item.id).address + "\")'" +
+                                "><span aria-hidden='true'>从公司来这</span>" +
                                 "</button>";
         vectorMarker.opts1 = { width: 100 };
         vectorMarker.infoWindow = new BMap.InfoWindow(vectorMarker.licontent, vectorMarker.opts1);
@@ -393,7 +553,7 @@
         /// The return type of getResults is LocalResult or array of LocalResult.
         /// links: 1) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/LocalSearch
         ///        2) http://developer.baidu.com/map/reference/index.php?title=Class:%E6%9C%8D%E5%8A%A1%E7%B1%BB/LocalResult
-        
+
         var options = {
             onSearchComplete: function (results) {
                 if (local.getStatus() == BMAP_STATUS_SUCCESS) {
@@ -465,4 +625,69 @@
         for (i = 0; i < markersForSites.length; i++)
             map.removeOverlay(markersForSites[i]);
     }
+
+
+    //================show GPS begin===================//
+    function addRoutesIntoRouteSelector(routeNames, routeIds) {
+        for (var i=0; i< routeNames.length; i++) {
+            var opt = document.createElement('option');
+            opt.value = routeIds[i];
+            opt.innerHTML = routeNames[i];
+            var selector = document.getElementById("routeSelector");
+            selector.appendChild(opt);
+        }
+    }
+
+    function addGpsMarker(point, data) {
+        var customIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300, 157));
+        var gpsMarker = new BMap.Marker(point, { icon: customIcon});
+        map.addOverlay(gpsMarker);
+    }
+
+
+    function sleep(numberMillis) {
+        var now = new Date();
+        var exitTime = now.getTime() + numberMillis;
+        while (true) {
+            now = new Date();
+            if (now.getTime() > exitTime)
+                return;
+        }
+    }
+
+    function readGpsCsv() {
+        var lines = [];
+        var routesXmlHttp = new XMLHttpRequest();
+        routesXmlHttp.open('GET', '/gps.csv', true);
+        routesXmlHttp.onreadystatechange = function () {
+            if (XMLHttpRequest.DONE != routesXmlHttp.readyState) {
+                return;
+            }
+            if (200 != routesXmlHttp.status) {
+                return;
+            }
+            var allText = routesXmlHttp.responseText;
+            var allTextLines = allText.split(/\r\n|\n/);
+
+            for (var i=0; i<allTextLines.length; i++) {
+                var data = allTextLines[i].split(',');
+                lines.push(data);
+            }
+        };
+        routesXmlHttp.send();
+        return lines;
+    }
+
+    function showGPS(routeId) {
+
+        var data = readGpsCsv();
+
+        for (var i = 0; i < data.length; i++) {
+            addGpsMarker(new BMap.Point(data[i][0], data[i][1]));
+            //sleep(2000);
+        }
+    }
+    //================show GPS end===================//
+
+
 </script>
