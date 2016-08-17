@@ -607,9 +607,14 @@
     }
 
     function addGpsMarker(point, data) {
-        var customIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/fox.gif", new BMap.Size(300, 157));
+        var customIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
+            offset: new BMap.Size(10, 25),
+            imageOffset: new BMap.Size(0, 0 - 12 * 25)
+        });
+        //var customIcon = new BMap.Icon("http://7xnluw.com1.z0.glb.clouddn.com/MSShuttleBus/icon/bus.ico", new BMap.Size(64, 64));
         var gpsMarker = new BMap.Marker(point, { icon: customIcon});
         map.addOverlay(gpsMarker);
+        return gpsMarker;
     }
 
 
@@ -646,14 +651,20 @@
         return lines;
     }
 
+    var data = readGpsCsv();
+    var index = 0;
+    var marker = new BMap.Marker();
     function showGPS(routeId) {
+        map.removeOverlay(marker);
+        var point = new BMap.Point(data[index][0], data[index][1]);
+        marker = addGpsMarker(point);
+        map.setCenter(point);
+        index = index + 1;
+        if (index < data.length)
+            setTimeout(function () { showGPS(routeId); }, 1000);
+        else
+            index = 0;
 
-        var data = readGpsCsv();
-
-        for (var i = 0; i < data.length; i++) {
-            addGpsMarker(new BMap.Point(data[i][0], data[i][1]));
-            //sleep(2000);
-        }
     }
     //================show GPS end===================//
 
