@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.IO;
@@ -7,19 +7,18 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using MicrosoftShuttleBusService.Controllers;
 
 namespace BusManager
 {
     class DataAccess
     {
-        static string path = HomeController.HomeDirectory + "Controllers\\BusManager\\shuttle.txt";
-        static string StationFile = HomeController.HomeDirectory + "Controllers\\BusManager\\AllStations";
-        static string RouteFile = HomeController.HomeDirectory +　"Controllers\\BusManager\\AllRoutes";
+        static string HomeDirectory = @"C:\Users\t-qiche\Documents\Visual Studio 2015\Projects\MicrosoftShuttleBusService\MicrosoftShuttleBusService\";
+        static string path = HomeDirectory + "Controllers\\BusManager\\shuttle.txt";
+        static string StationFile = HomeDirectory + "Controllers\\BusManager\\AllStations";
+        static string RouteFile = HomeDirectory +　"Controllers\\BusManager\\AllRoutes";
 
-        public static List<Station> Read()
+        public static List<Station> Read()          //Initialize and generate the data
         {
-          
             var AllStations = new List<Station>();
             var AllRoutes = new List<Route>();
             
@@ -31,19 +30,28 @@ namespace BusManager
                 var trimmedline = line.TrimEnd('\t');
                 AllStations.Add(CreateFromString(trimmedline));
             }
-            //string xml = XmlUtil.Serializer(typeof(List<Station>), AllStations);
-            string json = JsonConvert.SerializeObject(AllStations);
-            StreamWriter sw = new StreamWriter(StationFile,false);
-            sw.Write(json);
-            sw.Close();
+            WriteAllStations(AllStations);
 
             AllRoutes = GenerateRoutes(AllStations);
-            //xml = XmlUtil.Serializer(typeof(List<Route>), AllRoutes);
-            json = JsonConvert.SerializeObject(AllRoutes); 
-            sw = new StreamWriter(RouteFile, false);
+            WriteAllRoutes(AllRoutes);
+
+            return AllStations;
+        }
+
+        public static void WriteAllStations(List<Station> AllStations)
+        {
+            string json = JsonConvert.SerializeObject(AllStations);
+            StreamWriter sw = new StreamWriter(StationFile, false);
             sw.Write(json);
             sw.Close();
-            return AllStations;
+        }
+
+        public static void WriteAllRoutes(List<Route> AllRoutes)
+        {
+            string json = JsonConvert.SerializeObject(AllRoutes);
+            StreamWriter sw = new StreamWriter(RouteFile, false);
+            sw.Write(json);
+            sw.Close();
         }
 
         public static List<Route> GenerateRoutes(List<Station> allStations)
@@ -126,6 +134,5 @@ namespace BusManager
             return allRoutes;
         }
 
-        
     }
 }
