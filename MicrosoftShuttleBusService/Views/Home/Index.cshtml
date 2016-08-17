@@ -397,7 +397,7 @@
             success: function (responseText) {
                 //responseText = '[{"RouteNumber":"Route21","Stations":[{"name":"站点1-1","LocX":121.398852,"LocY":31.111445},{"name":"站点1-2","LocX":121.456869,"LocY":31.0265}]},{"RouteNumber":"RT3","Stations":[{"name":"站点2-1","LocX":121.398921,"LocY":31.106097},{"name":"站点2-2","LocX":121.401809,"LocY":31.100201},{"name":"站点2-3","LocX":121.456869,"LocY":31.0265}]},{"RouteNumber":"Route22","Stations":[{"name":"站点3-1","LocX":121.401809,"LocY":31.100201},{"name":"站点3-2","LocX":121.409845,"LocY":31.07968},{"name":"站点3-3","LocX":121.407967,"LocY":31.073101},{"name":"站点3-4","LocX":121.456869,"LocY":31.0265}]}]';
                 var myObject = eval('(' + responseText + ')');
-                var firstRoute = myObject[2];
+                var firstRoute = myObject[0];
                 var routeNumber = firstRoute.RouteNumber;
                 var firstRouteDetail = firstRoute.Stations;
                 var shuttleBusResult = '<h1 style="font:bold 16px arial,sans-serif">而后转乘' + routeNumber + '到达微软上海分公司</h1>';
