@@ -134,6 +134,5 @@ namespace BusManager
             return allRoutes;
         }
 
-        
     }
 }

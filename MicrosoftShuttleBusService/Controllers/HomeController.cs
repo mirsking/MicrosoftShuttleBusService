@@ -94,7 +94,8 @@ namespace MicrosoftShuttleBusService.Controllers
 			string route = "Route1";
 			double x = 0;
 			double y = 0;
-            BusUtil.AdminEditStation(name,route,x,y);
+            string r = string.Join("",route.Split());
+            BusUtil.AdminEditStation(name,r,x,y);
         }
     }
 }
