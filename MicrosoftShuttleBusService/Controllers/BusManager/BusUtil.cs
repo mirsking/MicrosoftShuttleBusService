@@ -13,14 +13,30 @@ namespace BusManager
 {
     static class BusUtil
     {
-
-        public class BaiduRoute
+        public class jsonStation
         {
-            public int status;
-            public string message;
-            public int type;
-
+            public string name;
+            public double LocX;
+            public double LocY;
+            public jsonStation(string n, double x, double y)
+            {
+                name = n;
+                LocX = x;
+                LocY = y;
+            }
         }
+
+        public class jsonRoute
+        {
+            public string RouteNumber;
+            public List<jsonStation> Stations;
+            public jsonRoute(string n, List<jsonStation> stations)
+            {
+                RouteNumber = n;
+                Stations = new List<jsonStation>(stations);
+            }
+        }
+
         public static int TimeBetweenStations(Station start, Station end)
         {
             int RouteNumber = 39;
@@ -86,12 +102,14 @@ namespace BusManager
             var bestStations = FindBestStation(x, y);
             int size = bestStations.Count;
             var allRoutes = DataAccess.ReadAllRoutes();
-            List<List<Point>> jsonstring = new List<List<Point>>();
+            List<jsonRoute> jsonString = new List<jsonRoute>();
             for (int i = 0; i < size; ++i)
             {
-                List<Point> route = new List<Point>();
+                List<jsonStation> jstations = new List<jsonStation>();
+                
                 Route r = allRoutes[NumberToRealNumber(bestStations[i].Route, bestStations[i].IsRoute)];
                 var routestations = r.Stations;
+                string routenumber = routestations[0].IsRoute ? "Route" : "RT" + Convert.ToString(routestations[0].Route);
                 int s = routestations.Count;
                 int j = 0;
                 while(j<s)
@@ -107,7 +125,7 @@ namespace BusManager
                 {
                     if (routestations[j].GetName() != y.GetName())
                     {
-                        route.Add(new Point(routestations[j].LocX, routestations[j].LocY));
+                        jstations.Add(new jsonStation(routestations[j].Name,routestations[j].LocX, routestations[j].LocY));
                         j++;
                     }
                     else
@@ -115,10 +133,10 @@ namespace BusManager
                         break;
                     }
                 }
-                route.Add(new Point(y.LocX, y.LocY));
-                jsonstring.Add(route);
+                jstations.Add(new jsonStation(y.Name,y.LocX, y.LocY));
+                jsonString.Add(new jsonRoute(routenumber,jstations));
             }
-            return JsonConvert.SerializeObject(jsonstring);
+            return JsonConvert.SerializeObject(jsonString);
         }
 
         public static double FindRouteByApi(Point x, Point y)
@@ -160,6 +178,33 @@ namespace BusManager
         {
             List<Station> allStations = DataAccess.ReadAllStations();
             return JsonConvert.SerializeObject(allStations);
+        }
+
+        public static Station GetStationFromName(string s)
+        {
+            var allStations = DataAccess.ReadAllStations();
+            foreach (Station station in allStations)
+            {
+                if (station.Name == s)
+                    return station;
+            }
+            return null;
+        }
+
+        public static void AdminEditStation(string name,string route, double newLocationX, double newLocationY)
+        {
+            var allStations = DataAccess.ReadAllStations();
+            foreach (Station s in allStations)
+            {
+                string rn = (s.IsRoute ? "Route" : "RT") + Convert.ToString(s.Route);
+                if (s.Name == name && rn == route)
+                {
+                    s.LocX = newLocationX;
+                    s.LocY = newLocationY;
+                    DataAccess.WriteAllStations(allStations);
+                    return;
+                }
+            }
         }
 
         public static void AddNewPoint(double x, double y)

@@ -69,5 +69,14 @@ namespace MicrosoftShuttleBusService.Controllers
             Station MicroSoft = allStations[4];
             return BusUtil.BestStationsToJson(l, MicroSoft);
         }
+		
+		public void EditStation(FormCollection collection)
+        {
+            string name = "上海站";
+			string route = "Route1";
+			double x = 0;
+			double y = 0;
+            BusUtil.AdminEditStation(name,route,x,y);
+        }
     }
 }
