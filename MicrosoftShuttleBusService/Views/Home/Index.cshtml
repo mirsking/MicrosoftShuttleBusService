@@ -71,12 +71,12 @@
                             </button>
                         </span>
                     </div><!-- /destinationDiv -->
-                    <div class="row">
-                        <div class ="col-md-6" id="route_result">
-                        </div><!-- /route_result -->
-                        <div class ="col-md-6" id="shuttle_bus_result">
-                        </div><!-- /shuttle_bus_result -->
-                    </div>
+                    @*<div class="row">*@
+                    <div id="route_result">
+                    </div><!-- /route_result -->
+                    <div id="shuttle_bus_result">
+                    </div><!-- /shuttle_bus_result -->
+                    @*</div>*@
                 </form>
             </div><!-- /routeDeatailDiv -->
 
@@ -395,7 +395,7 @@
         $("#lat").val(lat);
         $('#searchRouteForm').ajaxSubmit({
             success: function (responseText) {
-                responseText = '[{"RouteNumber":"Route21","Stations":[{"name":"站点1-1","LocX":121.398852,"LocY":31.111445},{"name":"站点1-2","LocX":121.456869,"LocY":31.0265}]},{"RouteNumber":"RT3","Stations":[{"name":"站点2-1","LocX":121.398921,"LocY":31.106097},{"name":"站点2-2","LocX":121.401809,"LocY":31.100201},{"name":"站点2-3","LocX":121.456869,"LocY":31.0265}]},{"RouteNumber":"Route22","Stations":[{"name":"站点3-1","LocX":121.401809,"LocY":31.100201},{"name":"站点3-2","LocX":121.409845,"LocY":31.07968},{"name":"站点3-3","LocX":121.407967,"LocY":31.073101},{"name":"站点3-4","LocX":121.456869,"LocY":31.0265}]}]';
+                //responseText = '[{"RouteNumber":"Route21","Stations":[{"name":"站点1-1","LocX":121.398852,"LocY":31.111445},{"name":"站点1-2","LocX":121.456869,"LocY":31.0265}]},{"RouteNumber":"RT3","Stations":[{"name":"站点2-1","LocX":121.398921,"LocY":31.106097},{"name":"站点2-2","LocX":121.401809,"LocY":31.100201},{"name":"站点2-3","LocX":121.456869,"LocY":31.0265}]},{"RouteNumber":"Route22","Stations":[{"name":"站点3-1","LocX":121.401809,"LocY":31.100201},{"name":"站点3-2","LocX":121.409845,"LocY":31.07968},{"name":"站点3-3","LocX":121.407967,"LocY":31.073101},{"name":"站点3-4","LocX":121.456869,"LocY":31.0265}]}]';
                 var myObject = eval('(' + responseText + ')');
                 var firstRoute = myObject[2];
                 var routeNumber = firstRoute.RouteNumber;
@@ -433,7 +433,28 @@
     function getPublicRoute(lng, lat, address, middlePoint)
     {
         var transit = new BMap.TransitRoute(map, {
-            renderOptions: { map: map, panel: "route_result" }
+            renderOptions: { map: map, panel: "route_result" },
+            onResultsHtmlSet: function (container) {
+                //alert(container);
+                routeInfo = container.children[1].children[0];
+                if (routeInfo.childElementCount>3)
+                {
+                    for (i = routeInfo.childElementCount-1; i >=3; i--)
+                        routeInfo.children[i].remove();
+                }
+                //addressMakers = container.firstChild.firstChild.childNodes;
+                //for (i = 0; i < addressMakers.length; i++) {
+                //    var btn = document.createElement('button');
+                //    btn.setAttribute("onclick", functionName + "(this)");
+                //    btn.setAttribute("class", "setBtn");
+                //    btn.setAttribute("style", "font-weight: bold; background-position: -21px -81px;");
+                //    btn.innerHTML = "选择";
+                //    btn.setAttribute("id", i);
+                //    addressMakers[i].childNodes[1].appendChild(btn);
+                //    container.childNodes[0].childNodes[0].childNodes[i].setAttribute("onmouseover", "this.click()")
+                //}
+                //container.removeChild(container.childNodes[1]);
+            }
         });
         $("#searchDiv").css("display", "none");
         $("#routeDetailDiv").css("display", "");
