@@ -7,15 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using MicrosoftShuttleBusService.Controllers;
 
 namespace BusManager
 {
     class DataAccess
     {
-        static string HomeDirectory = @"C:\Users\t-qiche\Documents\Visual Studio 2015\Projects\MicrosoftShuttleBusService\MicrosoftShuttleBusService\";
-        static string path = HomeDirectory + "Controllers\\BusManager\\shuttle.txt";
-        static string StationFile = HomeDirectory + "Controllers\\BusManager\\AllStations";
-        static string RouteFile = HomeDirectory +　"Controllers\\BusManager\\AllRoutes";
+        static string path = HomeController.HomeDirectory + "Controllers\\BusManager\\shuttle.txt";
+        static string StationFile = HomeController.HomeDirectory + "Controllers\\BusManager\\AllStations";
+        static string RouteFile = HomeController.HomeDirectory + "Controllers\\BusManager\\AllRoutes";
 
         public static List<Station> Read()          //Initialize and generate the data
         {
