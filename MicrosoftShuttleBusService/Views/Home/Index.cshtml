@@ -658,7 +658,8 @@
         map.removeOverlay(marker);
         var point = new BMap.Point(data[index][0], data[index][1]);
         marker = addGpsMarker(point);
-        map.setCenter(point);
+        if (index % 3 == 0)
+            map.centerAndZoom(point, 17);
         index = index + 1;
         if (index < data.length)
             setTimeout(function () { showGPS(routeId); }, 1000);
