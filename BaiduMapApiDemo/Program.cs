@@ -82,10 +82,11 @@ namespace BaiduMapApiDemo
     {
         static void Main(string[] args)
         {
+            string ak = "AxXlQ1BehjgOnV5GflqAjrs46iawMsUE";
+            /*
 
             #region create table
 
-            string ak = "AxXlQ1BehjgOnV5GflqAjrs46iawMsUE";
             var columns = new List<LbsGeotableColumn>()
             {
                 new LbsGeotableColumn() {Name = "BusStation", Key="BusStation", Type=(int)ColumnType.IsString, MaxLength=20, IsSearchField=1},
@@ -115,24 +116,41 @@ namespace BaiduMapApiDemo
             }
 
             #endregion
-
+            */
 
             #region Direction
             //parsed json
-            var origin = new Location { Longitude = 40.056878, Latitude = 116.30815 };
-            var destination = new Location { Longitude = 39.915285, Latitude = 116.403857 };
-            var time = WebApiDirection.GetDirectionTime(origin, destination, table.Ak);
-            Console.WriteLine("From 百度大厦 to 天安门 needs time: {0} s", time);
+            var originList = new List<Location>()
+            {
+                new Location {Latitude = 40.056878, Longitude = 116.30815},
+                new Location {Latitude = 31.116577170598, Longitude = 121.39161676554},
+                new Location {Latitude = 31.024468, Longitude = 121.426326}
+            };
+
+            var destinationList = new List<Location>()
+            {
+                new Location {Latitude = 39.915285, Longitude = 116.403857},
+                new Location {Latitude = 31.116847683967, Longitude = 121.38932608649},
+                new Location {Latitude = 31.024572, Longitude = 121.424916}
+            };
+
+            for (int i = 0; i < originList.Count; i++)
+            {
+                var time = WebApiDirection.GetDirectionTime(originList[i], destinationList[i], ak);
+                Console.WriteLine("From 百度大厦 to 天安门 needs time: {0} s", time);
+            }
 
             //return json directly, you can see the json format from here http://lbsyun.baidu.com/index.php?title=webapi/direction-api#.E5.85.AC.E4.BA.A4.E8.B7.AF.E5.BE.84.E8.A7.84.E5.88.92.E8.BF.94.E5.9B.9E.E5.80.BC.E8.AF.B4.E6.98.8E
-            var json = WebApiDirection.GetDirection(origin, destination, table.Ak);
+            var json = WebApiDirection.GetDirection(originList[0], destinationList[0], ak);
             Console.Write("Json is \n" + json);
             #endregion
 
+            /*
             #region Get Info
             var poiInfoCollection = table.GetAllPoiInfo<CustomPoiInfo>();
             var onePoiInfo = poiInfoCollection.contents.FirstOrDefault();
             #endregion
+            */
         }
     }
 }
