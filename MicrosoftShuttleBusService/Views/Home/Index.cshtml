@@ -698,6 +698,7 @@
     var marker = new BMap.Marker();
     function showGPS(routeId) {
         if (index == 0) {
+            deleteMarkersInBaiduMap(map);
             //draw the route
             //var responseText = '[[{"LocX":121.398852,"LocY":31.111445},{"LocX":121.456869,"LocY":31.0265}],[{"LocX":121.398921,"LocY":31.106097},{"LocX":121.401809,"LocY":31.100201},{"LocX":121.456869,"LocY":31.0265}],[{"LocX":121.401809,"LocY":31.100201},{"LocX":121.409845,"LocY":31.07968},{"LocX":121.407967,"LocY":31.073101},{"LocX":121.456869,"LocY":31.0265}]]';
             var responseText =
@@ -711,7 +712,7 @@
             var middleWayPoints = new Array();
             for (var i = 1; i < route.length - 1; i++)
                 middleWayPoints[i - 1] = new BMap.Point(route[i].LocX, route[i].LocY);
-
+            
             var driving = new BMap.DrivingRoute(map, { renderOptions: { map: map, autoViewport: true } });
             driving.search(p1, p2, { waypoints: middleWayPoints });//waypoints表示途经点
         }
@@ -720,8 +721,9 @@
         map.removeOverlay(marker);
         var point = new BMap.Point(data[index][0], data[index][1]);
         marker = addGpsMarker(point);
-        if (index % 3 == 0)
-            map.centerAndZoom(point, 16);
+        //if (index % 3 == 0)
+        //    map.centerAndZoom(point, 16);
+    
         index = index + 1;
         if (index < data.length)
             setTimeout(function () { showGPS(routeId); }, 1000);
