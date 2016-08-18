@@ -109,7 +109,7 @@ namespace BusManager
                 
                 Route r = allRoutes[NumberToRealNumber(bestStations[i].Route, bestStations[i].IsRoute)];
                 var routestations = r.Stations;
-                string routenumber = routestations[0].IsRoute ? "Route" : "RT" + Convert.ToString(routestations[0].Route);
+                string routenumber = (routestations[0].IsRoute ? "Route" : "RT") + Convert.ToString(routestations[0].Route);
                 int s = routestations.Count;
                 int j = 0;
                 while(j<s)
