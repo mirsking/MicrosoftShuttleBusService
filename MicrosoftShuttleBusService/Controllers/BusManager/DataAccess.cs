@@ -29,6 +29,7 @@ namespace BusManager
                 var trimmedline = line.TrimEnd('\t');
                 AllStations.Add(CreateFromString(trimmedline));
             }
+            sr.Close();
             WriteAllStations(AllStations);
 
             AllRoutes = GenerateRoutes(AllStations);
@@ -118,6 +119,7 @@ namespace BusManager
             StreamReader sr = new StreamReader(StationFile);
             //string xml = sr.ReadToEnd();
             string json = sr.ReadToEnd();
+            sr.Close();
             //List<Station> allStations = XmlUtil.Deserialize(typeof(List<Station>), xml) as List<Station>;
             List<Station> allStations = JsonConvert.DeserializeObject<List<Station>>(json);
             return allStations;

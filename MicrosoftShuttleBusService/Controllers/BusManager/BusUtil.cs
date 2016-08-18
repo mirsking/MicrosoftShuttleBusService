@@ -43,7 +43,7 @@ namespace BusManager
             int startRoute = (start.IsRoute ? 0 : 1)*RouteNumber + start.Route;
             int endRoute = (end.IsRoute ? 0 : 1) * RouteNumber + end.Route;
             if (startRoute != endRoute)
-                return -1;
+                return 100000;
             return GetTimeWithSameSchedule(start.GetToCompTime(), end.GetToCompTime());
         }
 
@@ -58,7 +58,7 @@ namespace BusManager
                 }
                 return Math.Abs(start[i] - end[i]);
             }
-            return -1;
+            return 100000;
         }
         public static List<Station> FindBestStation(Point x, Station y)
         {
@@ -159,13 +159,6 @@ namespace BusManager
             }
             list.Sort(cmp);
 
-            /*StreamWriter sw = new StreamWriter("C:\\t-zel\\younghackathon\\BusManager\\BusManager\\try");
-            for (int i = 0; i < size; ++i)
-            {
-                Console.WriteLine(list[i].Key);
-                sw.WriteLine(allStations[list[i].Value].Name);
-            }
-            sw.Close();*/
             var nearestStations = new List<Station>();
             for (int i = 0; i < k; ++i)
             {
