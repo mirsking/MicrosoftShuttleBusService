@@ -631,6 +631,10 @@
         for (i = 0; i < markersForSites.length; i++)
             map.removeOverlay(markersForSites[i]);
     }
+    function redrawMarkersInBaiduMapForSites(map) {
+        for (i = 0; i < markersForSites.length; i++)
+            map.addOverlay(markersForSites[i]);
+    }
 
 
     //================show GPS begin===================//
