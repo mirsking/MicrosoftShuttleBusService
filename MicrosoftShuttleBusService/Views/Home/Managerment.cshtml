@@ -259,15 +259,16 @@
             map.addOverlay(markersForStation[i]);
             markersForStation[i].licontent = "<div style=\"width:500px;height:200px;\"><div style=\"float:left\"><img src=\"" + datas[i].photo +
                             "\" style=\"width:300px;height:200px;\"></div><div style=\"float:right;width:180px;height:200px;\">" + 
-                            "<form id=\"searchRouteForm\" action=\"/Home/BestStationsInJson\" method=\"post\" target=\"_blank\"><span><strong>班车站点:</strong>" +
+                            "<form id=\"ChangeStation" + i + "\" action=\"/Home/EditStation\" method=\"post\" target=\"_blank\"><span><strong>班车站点:</strong>" +
                             "<input id=\"name\" name=\"name\" class=\"form-control\" aria-describedby=\"basic-addon1\" value=\"" + datas[i].name + "\">" +
-                            "<input id=\"lng\" name=\"lng\" type=\"hidden\" class=\"form-control\" aria-describedby=\"basic-addon1\" value=\"" + datas[i].longitude + "\">" +
-                            "<input id=\"lat\" name=\"lat\" type=\"hidden\" class=\"form-control\" aria-describedby=\"basic-addon1\" value=\"" + datas[i].latitude + "\">" +
+                            "<input id=\"lng" + i + "\" name=\"lng\" type=\"hidden\" class=\"form-control\" aria-describedby=\"basic-addon1\" value=\"" + datas[i].longitude + "\">" +
+                            "<input id=\"lat" + i + "\" name=\"lat\" type=\"hidden\" class=\"form-control\" aria-describedby=\"basic-addon1\" value=\"" + datas[i].latitude + "\">" +
                             "</span>" + "<span><strong>班车路线:</strong>" +
                             "<input id=\"route\" name=\"route\" class=\"form-control\" aria-describedby=\"basic-addon1\" value=\"" + datas[i].route + "\">" +
                             "</span>" + "<span><strong>到站时间:</strong>" +
                             "<input id=\"time\" name=\"time\" class=\"form-control\" aria-describedby=\"basic-addon1\" value=\"" + datas[i].routeTime + "\">" +
-                            "</span>" + "<button id=\"saveButton\" class=\"btn btn-default\" type=\"button\" style=\"margin-left:10px;margin-top:10px\">保存</button>" +
+                            "</span>" + "<button id=\"saveButton\" class=\"btn btn-default\" type=\"button\" style=\"margin-left:10px;margin-top:10px\" onclick=\"ModifyStation(" + i + ")\">保存</button>" +
+                            "<button id=\"saveButton" + i + "\" class=\"btn btn-default\" style=\"display:none\" style=\"margin-left:10px;margin-top:10px\">保存</button>" +
                             "   <button id=\"saveButton\" class=\"btn btn-default\" type=\"button\" style=\"margin-left:40px;margin-top:10px\">删除</button>" + "</form></div></div>";
             markersForStation[i].opts1 = { width: 500 };
             markersForStation[i].infoWindow = new BMap.InfoWindow(markersForStation[i].licontent, markersForStation[i].opts1);
@@ -276,6 +277,16 @@
                 this.openInfoWindow(this.infoWindow);
             });
         }
+    }
+
+    function ModifyStation(i) {
+        $("#lng" + i).val(markersForStation[i].point.lng);
+        $("#lat" + i).val(markersForStation[i].point.lat);
+        $('#ChangeStation' + i).ajaxSubmit({
+            success: function (responseText) {
+                alert(responseText);
+            }
+        });
     }
 
     function deleteMarkersInBaiduMap(map) {

@@ -94,7 +94,7 @@ namespace MicrosoftShuttleBusService.Controllers
             return BusUtil.BestStationsToJson(l, MicroSoft);
         }
 		
-		public void EditStation(FormCollection collection)
+		public String EditStation(FormCollection collection)
         {
             string name = "上海站";
 			string route = "Route1";
@@ -102,6 +102,7 @@ namespace MicrosoftShuttleBusService.Controllers
 			double y = 0;
             string r = string.Join("",route.Split());
             BusUtil.AdminEditStation(name,r,x,y);
+            return "success";
         }
     }
 }
