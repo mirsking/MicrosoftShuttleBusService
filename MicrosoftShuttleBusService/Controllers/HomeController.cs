@@ -80,6 +80,11 @@ namespace MicrosoftShuttleBusService.Controllers
             return BusUtil.AllRoutesToJson();
         }
 
+        public string CheckRouteInJson(string s, bool isToComp)
+        {
+            return BusUtil.CheckRouteToJson(s,isToComp);
+        }
+
         public String BestStationsInJson(FormCollection collection)
         {
             if (string.IsNullOrEmpty(HomeDirectory))

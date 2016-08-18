@@ -173,6 +173,33 @@ namespace BusManager
             return JsonConvert.SerializeObject(allStations);
         }
 
+        public static string CheckRouteToJson(string route, bool isToComp)
+        {
+            string r = string.Join("", route.Split());
+            bool isRoute = r.StartsWith("Route");
+            int routeNo = Convert.ToInt32(isRoute ? r.Substring(5) : r.Substring(2));
+            List<Route> allRoutes = DataAccess.ReadAllRoutes();
+            Route checkRoute = allRoutes[NumberToRealNumber(routeNo, isRoute)];
+            List<Point> stations = new List<Point>();
+            if (isToComp)
+            {
+                for(int i = 0;i<checkRoute.Stations.Count;++i)
+                {
+                    stations.Add(new Point(checkRoute.Stations[i].LocX, checkRoute.Stations[i].LocY));
+                }
+            }
+            else
+            {
+                {
+                    for (int i = checkRoute.Stations.Count-1; i >= 0; --i)
+                    {
+                        stations.Add(new Point(checkRoute.Stations[i].LocX, checkRoute.Stations[i].LocY));
+                    }
+                }
+            }
+            return JsonConvert.SerializeObject(stations);
+        }
+
         public static Station GetStationFromName(string s)
         {
             var allStations = DataAccess.ReadAllStations();
