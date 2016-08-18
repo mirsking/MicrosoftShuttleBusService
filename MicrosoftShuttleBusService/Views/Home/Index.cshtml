@@ -243,7 +243,7 @@
         });
 
         $("#newSiteButtonHide").click(function () {
-            
+
             $('#addSiteForm').ajaxSubmit({
                 success: function (responseText) {
                     var datasForSite = new Array();
@@ -702,7 +702,7 @@
             //draw the route
             //var responseText = '[[{"LocX":121.398852,"LocY":31.111445},{"LocX":121.456869,"LocY":31.0265}],[{"LocX":121.398921,"LocY":31.106097},{"LocX":121.401809,"LocY":31.100201},{"LocX":121.456869,"LocY":31.0265}],[{"LocX":121.401809,"LocY":31.100201},{"LocX":121.409845,"LocY":31.07968},{"LocX":121.407967,"LocY":31.073101},{"LocX":121.456869,"LocY":31.0265}]]';
             var responseText =
-                '[{"LocX": 121.456869,"LocY": 31.0265},{"LocX":121.475123,"LocY":31.044751},{"LocX":121.547468,"LocY":31.185693},{"LocX":121.564092,"LocY":31.210344},{"LocX":121.557297,"LocY":31.215494}]';
+                '[{"LocX": 121.456869,"LocY": 31.0265},{"LocX":121.475123,"LocY":31.044751},{"LocX":121.5080539,"LocY":31.11464565},{"LocX":121.5318422,"LocY":31.18180655},{"LocX":121.547468,"LocY":31.185693},{"LocX":121.564092,"LocY":31.210344},{"LocX":121.557297,"LocY":31.215494}]';
             var route = eval('(' + responseText + ')');
             var begin = route[0];
             var end = route[route.length-1];
@@ -723,10 +723,9 @@
         marker = addGpsMarker(point);
         //if (index % 3 == 0)
         //    map.centerAndZoom(point, 16);
-    
         index = index + 1;
         if (index < data.length)
-            setTimeout(function () { showGPS(routeId); }, 1000);
+            setTimeout(function () { showGPS(routeId); }, 200);
         else
             index = 0;
 
