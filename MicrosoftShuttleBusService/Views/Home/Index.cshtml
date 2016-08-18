@@ -697,11 +697,36 @@
     var index = 0;
     var marker = new BMap.Marker();
     function showGPS(routeId) {
+        if (index == 0) {
+            //draw the route
+            var responseText = '[[{"LocX":121.398852,"LocY":31.111445},{"LocX":121.456869,"LocY":31.0265}],[{"LocX":121.398921,"LocY":31.106097},{"LocX":121.401809,"LocY":31.100201},{"LocX":121.456869,"LocY":31.0265}],[{"LocX":121.401809,"LocY":31.100201},{"LocX":121.409845,"LocY":31.07968},{"LocX":121.407967,"LocY":31.073101},{"LocX":121.456869,"LocY":31.0265}]]';
+            var myObject = eval('(' + responseText + ')');
+            var firstRoute = myObject[0];
+            var middlePoint = firstRoute[0];
+            var finalPoint = firstRoute[firstRoute.length-1];
+
+            var microsoftlng = finalPoint.LocX;
+            var microsoftlat = finalPoint.LocY;
+            var p1 = new BMap.Point(middlePoint.LocX, middlePoint.LocY);
+            var p2 = new BMap.Point(microsoftlng, microsoftlat);
+            var middleWayPoints = new Array();
+            if (firstRoute.length > 2) {
+                for (var i = 1; i < firstRoute.length - 1; i++)
+                    middleWayPoints[i - 1] = new BMap.Point(firstRoute[i].LocX, firstRoute[i].LocY);
+            }
+
+            //var p3 = new BMap.Point(121.476788, 31.03754);
+
+            var driving = new BMap.DrivingRoute(map, { renderOptions: { map: map, autoViewport: true } });
+            driving.search(p1, p2, { waypoints: middleWayPoints });//waypoints表示途经点
+        }
+
+
         map.removeOverlay(marker);
         var point = new BMap.Point(data[index][0], data[index][1]);
         marker = addGpsMarker(point);
         if (index % 3 == 0)
-            map.centerAndZoom(point, 17);
+            map.centerAndZoom(point, 16);
         index = index + 1;
         if (index < data.length)
             setTimeout(function () { showGPS(routeId); }, 1000);
