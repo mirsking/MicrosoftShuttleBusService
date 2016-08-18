@@ -96,10 +96,10 @@ namespace MicrosoftShuttleBusService.Controllers
 		
 		public String EditStation(FormCollection collection)
         {
-            string name = "上海站";
-			string route = "Route1";
-			double x = 0;
-			double y = 0;
+            string name = collection["name"];
+			string route = collection["route"];
+            double x = Convert.ToDouble(collection["lng"]);
+            double y = Convert.ToDouble(collection["lat"]);
             string r = string.Join("",route.Split());
             BusUtil.AdminEditStation(name,r,x,y);
             return "success";
