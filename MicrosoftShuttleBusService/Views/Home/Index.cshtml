@@ -430,22 +430,23 @@
 
                 var driving = new BMap.DrivingRoute(map, { renderOptions: { map: map, autoViewport: true } });
                 driving.search(p1, p2, { waypoints: middleWayPoints });//waypoints表示途经点
+                var center = map.getCenter();
+                var zoom = map.getZoom();
 
-                getPublicRoute(lng, lat, address, middlePoint);
+                getPublicRoute(lng, lat, address, middlePoint, center, zoom);
             }
         });
     }
 
-    function getPublicRoute(lng, lat, address, middlePoint)
-    {
-        var transit = new BMap.TransitRoute(map, {
+    function getPublicRoute(lng, lat, address, middlePoint, center, zoom) {
+        var transit = new BMap.TransitRoute(map,
+        {
             renderOptions: { map: map, panel: "route_result" },
-            onResultsHtmlSet: function (container) {
+            onResultsHtmlSet: function(container) {
                 //alert(container);
                 routeInfo = container.children[1].children[0];
-                if (routeInfo.childElementCount>3)
-                {
-                    for (i = routeInfo.childElementCount-1; i >=3; i--)
+                if (routeInfo.childElementCount > 3) {
+                    for (i = routeInfo.childElementCount - 1; i >= 3; i--)
                         routeInfo.children[i].remove();
                 }
                 //addressMakers = container.firstChild.firstChild.childNodes;
@@ -460,8 +461,12 @@
                 //    container.childNodes[0].childNodes[0].childNodes[i].setAttribute("onmouseover", "this.click()")
                 //}
                 //container.removeChild(container.childNodes[1]);
+            },
+            onMarkersSet: function(results) {
+                map.centerAndZoom(center, zoom);
             }
-        });
+
+    });
         $("#searchDiv").css("display", "none");
         $("#routeDetailDiv").css("display", "");
         $("#newSiteDiv").css("display", "none");
