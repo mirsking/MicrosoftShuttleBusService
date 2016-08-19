@@ -407,7 +407,6 @@
                 var routeNumber = firstRoute.RouteNumber;
                 var firstRouteDetail = firstRoute.Stations;
                 var shuttleBusResult = '<h1 style="font:bold 16px arial,sans-serif">而后转乘' + routeNumber + '到达微软上海分公司</h1>';
-                shuttleBusResult = shuttleBusResult + '<p>上车点:' + firstRouteDetail[0].name + '</p>';
                 if (firstRouteDetail.length > 2) {
                     shuttleBusResult = shuttleBusResult + '<p>途经:</p>';
                     for (var i = 1; i < firstRouteDetail.length - 1; i++)
@@ -446,12 +445,22 @@
             onResultsHtmlSet: function(container) {
                 //alert(container);
                 routeInfo = container.children[1].children[0];
-                if (routeInfo.childElementCount>1)
-                {
-                    for (i = routeInfo.childElementCount-1; i >=1; i--)
+                if (routeInfo.childElementCount > 3) {
+                    for (i = routeInfo.childElementCount - 1; i >= 3; i--)
                         routeInfo.children[i].remove();
                 }
-                container.children[0].innerHTML = "乘公共交通工具前往 " + middlePoint.name + " 的路线";
+                //addressMakers = container.firstChild.firstChild.childNodes;
+                //for (i = 0; i < addressMakers.length; i++) {
+                //    var btn = document.createElement('button');
+                //    btn.setAttribute("onclick", functionName + "(this)");
+                //    btn.setAttribute("class", "setBtn");
+                //    btn.setAttribute("style", "font-weight: bold; background-position: -21px -81px;");
+                //    btn.innerHTML = "选择";
+                //    btn.setAttribute("id", i);
+                //    addressMakers[i].childNodes[1].appendChild(btn);
+                //    container.childNodes[0].childNodes[0].childNodes[i].setAttribute("onmouseover", "this.click()")
+                //}
+                //container.removeChild(container.childNodes[1]);
             },
             onMarkersSet: function(results) {
                 map.centerAndZoom(center, zoom);
@@ -461,8 +470,7 @@
         $("#searchDiv").css("display", "none");
         $("#routeDetailDiv").css("display", "");
         $("#newSiteDiv").css("display", "none");
-        //$("#sourceInput").val(address);
-        $("#sourceInput").val($("#searchForInput").val());
+        $("#sourceInput").val(address);
         $("#destinationInput").val("微软上海分公司");
 
         transit.search(new BMap.Point(lng, lat), new BMap.Point(middlePoint.LocX, middlePoint.LocY));
@@ -493,7 +501,7 @@
         var overlays = map.getOverlays();
         for (i = 0; i < overlays.length ; i++)
             map.removeOverlay(overlays[i]);
-        //addMarkersInBaiduMap(datas, map);
+        addMarkersInBaiduMap(datas, map);
         var myIcon = new BMap.Icon("../Content/location.png", new BMap.Size(47, 63));
         var vectorMarker = new BMap.Marker(new BMap.Point(searchLocalResults.getPoi(item.id).point.lng, searchLocalResults.getPoi(item.id).point.lat), {icon:myIcon});
         map.addOverlay(vectorMarker);
@@ -592,7 +600,6 @@
     }
 
     function localSearch() {
-        deleteMarkersInBaiduMap(map);
         var local_search = createLocalSearch(map, "search_result", "locateToPlace");
         local_search.search($("#searchForInput").val());
     }
@@ -694,8 +701,11 @@
     var data = readGpsCsv();
     var index = 0;
     var marker = new BMap.Marker();
-    function showGPS(routeId) {
-        if (index == 0) {
+    function showGPS(routeId, isInCallBack) {
+        isInCallBack = arguments[1] ? arguments[1] : false;
+        if (index == 0 || !isInCallBack) {
+            index = 0;
+            map.reset();
             deleteMarkersInBaiduMap(map);
             //draw the route
             //var responseText = '[[{"LocX":121.398852,"LocY":31.111445},{"LocX":121.456869,"LocY":31.0265}],[{"LocX":121.398921,"LocY":31.106097},{"LocX":121.401809,"LocY":31.100201},{"LocX":121.456869,"LocY":31.0265}],[{"LocX":121.401809,"LocY":31.100201},{"LocX":121.409845,"LocY":31.07968},{"LocX":121.407967,"LocY":31.073101},{"LocX":121.456869,"LocY":31.0265}]]';
@@ -723,7 +733,7 @@
         //    map.centerAndZoom(point, 16);
         index = index + 1;
         if (index < data.length)
-            setTimeout(function () { showGPS(routeId); }, 200);
+            setTimeout(function () { showGPS(routeId, true); }, 1000);
         else
             index = 0;
 
