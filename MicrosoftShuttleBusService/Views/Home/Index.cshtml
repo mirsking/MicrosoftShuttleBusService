@@ -202,6 +202,7 @@
         $("#returnFromGpsViewerButton").click(function () {
             $("#searchDiv").css("display", "");
             $("#viewGpsDiv").css("display", "none");
+            redrawMarkersInBaiduMap(map);
         });
 
         //show gps info
@@ -217,12 +218,14 @@
             $("#searchDiv").css("display", "");
             $("#routeDetailDiv").css("display", "none");
             $("#newSiteDiv").css("display", "none");
+            redrawMarkersInBaiduMap(map);
         });
 
         $("#returnFromNewSiteButton").click(function () {
             $("#searchDiv").css("display", "");
             $("#routeDetailDiv").css("display", "none");
             $("#newSiteDiv").css("display", "none");
+            redrawMarkersInBaiduMap(map);
         });
 
         $("#exchangeButton").click(function () {
@@ -382,6 +385,11 @@
     function deleteMarkersInBaiduMap(map) {
         for (i = 0; i < markersForStation.length; i++)
             map.removeOverlay(markersForStation[i]);
+    }
+
+    function redrawMarkersInBaiduMap(map) {
+        for (i = 0; i < markersForStation.length; i++)
+            map.addOverlay(markersForStation[i]);
     }
 
     function createTransit(map) {
